@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context=".MainActivity">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="@string/Alex"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/musicpic" />
+
+    <SeekBar
+        android:id="@+id/volume"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="250dp"
+        android:layout_toEndOf="@id/img"
+        android:rotation="270"
+        android:thumb="@drawable/seekbar_thumb" />
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_below="@id/volume"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="60dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_volume_up_black_24dp" />
+
+    <TextView
+        android:id="@+id/TextTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/img"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:text="@string/Blow"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/TextName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/TextTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/Aua"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp" />
+
+    <SeekBar
+        android:id="@+id/PlayLine"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_above="@+id/play"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp" />
+
+    <TextView
+        android:id="@+id/TextStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/PlayLine"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/one"
+        android:textColor="#FFECB3" />
+
+    <TextView
+        android:id="@+id/TextEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/PlayLine"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
+        android:text="@string/one"
+        android:textColor="#FFECB3" />
+
+    <Button
+        android:id="@+id/play"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/ic_play_arrow_black_24dp"
+        android:onClick="PlayButton" />
+
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="60dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_favorite_border_black_24dp"/>
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="60dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_error_outline_black_24dp"/>
+
+
+
+
+</RelativeLayout>

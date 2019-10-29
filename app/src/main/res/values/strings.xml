@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Music_application</string>
+
+
+    <string name="Alex">Alex Music</string>
+    <string name="Blow">Blow Your Mind</string>
+    <string name="Aua">Auc Lipa</string>
+    <string name="one">0.25</string>
+    <string name="two">-0.25</string>
+
+</resources>
