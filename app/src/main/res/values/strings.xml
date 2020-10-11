@@ -7,5 +7,24 @@
     <string name="Aua">Auc Lipa</string>
     <string name="one">0.25</string>
     <string name="two">-0.25</string>
+    <string name="song">song</string>
+    <string name="songName">songName</string>
+    <string name="artist_name">Artist Name</string>
 
+    <string name="set_storage_location">Set Storage Location</string>
+    <string name="sleep_timer">Sleep Timer</string>
+    <string name="about">About</string>
+    <string name="set_storage_loc">Set a location from your storage to scan your music files from..</string>
+    <string name="textview">TextView</string>
+    <string name="settings">SETTINGS</string>
+
+
+    <string-array name="sleepTimes">
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>15 minutes</item>
+        <item>20 minutes</item>
+        <item>25 minutes</item>
+        <item>40 minutes</item>
+    </string-array>
 </resources>
