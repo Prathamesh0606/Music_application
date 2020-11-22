@@ -5,24 +5,35 @@ import java.io.Serializable;
 
 public class Audio implements Serializable {
 
-    private String data;
+    private String path;
     private String title;
     private String album;
     private String artist;
+    private String duration;
 
-    public Audio(String data, String title, String album, String artist) {
-        this.data = data;
-        this.title = title;
-        this.album = album;
-        this.artist = artist;
+//    public Audio(String path, String title, String album, String artist, String duration) {
+//        this.path = path;
+//        this.title = title;
+//        this.album = album;
+//        this.artist = artist;
+//        this.duration = duration;
+//    }
+
+    public String getPath() {
+        return path;
     }
 
-    public String getData() {
-        return data;
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 
     public String getTitle() {
@@ -36,6 +47,7 @@ public class Audio implements Serializable {
     public String getAlbum() {
         return album;
     }
+
 
     public void setAlbum(String album) {
         this.album = album;

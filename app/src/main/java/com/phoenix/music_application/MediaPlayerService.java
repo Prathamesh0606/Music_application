@@ -1,5 +1,6 @@
 package com.phoenix.music_application;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -14,7 +15,9 @@ import android.media.MediaPlayer;
 import android.media.session.MediaSessionManager;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -37,21 +40,38 @@ import java.util.ArrayList;
 public class MediaPlayerService extends Service {
 
 
+
 //    public static final String ACTION_PLAY = "com.phoenix.music_application.ACTION_PLAY";
 //    public static final String ACTION_PAUSE = "com.phoenix.music_application.ACTION_PAUSE";
 //    public static final String ACTION_PREVIOUS = "com.phoenix.music_application.ACTION_PREVIOUS";
 //    public static final String ACTION_NEXT = "com.phoenix.music_application.ACTION_NEXT";
 //    public static final String ACTION_STOP = "com.phoenix.music_application.ACTION_STOP";
 
-    private static MediaPlayer mediaPlayer;
+    static MediaPlayer mediaPlayer;
     String songToPlay;
+    static int duration;
     public static boolean isplaying;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Toast.makeText(this, "--service created--", Toast.LENGTH_LONG).show();
+
+
+        //Time Shows
+
+
     }
+
+//    public String createTimeText(int time) {
+//        String timeText;
+//        int min = time / 1000 / 60;
+//        int sec = time / 1000 % 60;
+//        timeText = min + ":";
+//        if (sec < 10) timeText += "0";
+//        timeText += sec;
+//        return timeText;
+//    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -77,13 +97,40 @@ public class MediaPlayerService extends Service {
 //        return super.onStartCommand(intent, flags, startId);
     }
 
+
     @Override
     public void onDestroy() {
 
         super.onDestroy();
         Toast.makeText(this, "--service destroyed--", Toast.LENGTH_LONG).show();
         mediaPlayer.stop();
+        isplaying = false;
         mediaPlayer.release();
+    }
+
+    public static boolean isMediaPlayernull() {
+        if (mediaPlayer == null)
+            return true;
+        else return false;
+    }
+
+    public static int getposition() {
+        int currentPosition = mediaPlayer.getCurrentPosition();
+        return currentPosition;
+    }
+
+    public static void seekto(int prog) {
+        mediaPlayer.seekTo(prog);
+    }
+
+    public static int getSongDuration() {
+        if (mediaPlayer != null) {
+            duration = mediaPlayer.getDuration();
+
+        } else {
+            duration = 0;
+        }
+        return duration;
     }
 
     public static void pause() {

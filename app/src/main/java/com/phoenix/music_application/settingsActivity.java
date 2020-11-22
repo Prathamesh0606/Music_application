@@ -71,20 +71,20 @@ public class settingsActivity extends AppCompatActivity {
     public void about(View view) {
     }
 
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case FilePickerDialog.EXTERNAL_READ_PERMISSION_GRANT: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (dialog != null) {   //Show dialog if the read permission has been granted.
-                        dialog.show();
-                    }
-                } else {
-                    //Permission has not been granted. Notify the user.
-                    Toast.makeText(settingsActivity.this, "Permission is Required for getting list of files", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        switch (requestCode) {
+//            case FilePickerDialog.EXTERNAL_READ_PERMISSION_GRANT: {
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    if (dialog != null) {   //Show dialog if the read permission has been granted.
+//                        dialog.show();
+//                    }
+//                } else {
+//                    //Permission has not been granted. Notify the user.
+//                    Toast.makeText(settingsActivity.this, "Permission is Required for getting list of files", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        }
+//    }
 }
 
 

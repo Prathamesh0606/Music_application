@@ -19,7 +19,7 @@ public class PreferencesConfig {
 
     //this method writes arraylist from Playlistactivity class to preferences
 
-    public static void writeInPref(Context context, ArrayList<File> list) {
+    public static void writeInPref(Context context, ArrayList<Audio> list) {
         Gson gson = new Gson();
         String jsonString = gson.toJson(list);          //gson is library made to convert arralist type to json and store in preferences as string
         //It is retrieved by converting string from preferences again to arraylist
@@ -30,13 +30,13 @@ public class PreferencesConfig {
         editor.apply();
     }
 
-    public static ArrayList<File> readFromPref(Context context) {
+    public static ArrayList<Audio> readFromPref(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         String jsonString = pref.getString(KEY, "null");
         Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<File>>() {
+        Type type = new TypeToken<ArrayList<Audio>>() {
         }.getType();  //creates template kindof thing, im not sure
-        ArrayList<File> list = gson.fromJson(jsonString, type);
+        ArrayList<Audio> list = gson.fromJson(jsonString, type);
         return list;
     }
 }
