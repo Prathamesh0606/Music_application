@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 //Class to write arraylist into preferences so that it gets stored in storage.
 public class PreferencesConfig {
+
     private static final String KEY = "list_key";
 
 
@@ -40,3 +41,5 @@ public class PreferencesConfig {
         return list;
     }
 }
+
+

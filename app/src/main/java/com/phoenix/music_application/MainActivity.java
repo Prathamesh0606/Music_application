@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 
@@ -16,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -38,6 +41,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     Button playBtton;
+    Button skipToNextBtn;
     public SeekBar start, end;
     public TextView startText;
     public TextView endText;
@@ -54,10 +58,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     int SongTotalTime = 0;
     Uri uri;
     Audio a;
+    static int pos;
     Cursor cursor = null;
     private MediaPlayerService player;
     boolean serviceBound = false;
     int time = 0;
+    SharedPreferences sharedPreferences;
 
 
     //public static final String Broadcast_PLAY_NEW_AUDIO = "com.phoenix.music_application.PlayNewAudio";
@@ -80,17 +86,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         getPermissions();
 
 
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
 
-        }
 
         //Id implementation
         songNameTextView = findViewById(R.id.TextTitle);
         artistNameTextView = findViewById(R.id.TextName);
         settingsIcon = (ImageView) findViewById(R.id.settingsIcon);
         playBtton = findViewById(R.id.play);
+        skipToNextBtn = findViewById(R.id.nextSong);
         addToFavs = findViewById(R.id.add_to_favs_btn);
         startText = findViewById(R.id.TextStart);
         endText = findViewById(R.id.TextEnd);
@@ -105,7 +108,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             songsList = PreferencesConfig.readFromPref(this);
 
             //songsList = (ArrayList) i.getStringArrayListExtra("songList");
-            int pos = i.getIntExtra("songIndex", 0);
+            int p = LoadInt(getApplicationContext(), "position");
+            pos = i.getIntExtra("songIndex", p);
+            SaveInt(getApplicationContext(), "position", pos);
             String songPath = songsList.get(pos).getPath();
 
             uri = Uri.parse(songPath);
@@ -178,6 +183,31 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, settingsActivity.class);
                 startActivity(intent);
+            }
+        });
+
+
+        skipToNextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (pos < songsList.size()) {
+                    pos++;
+
+                } else pos = 0;
+                Intent intent = new Intent(MainActivity.this, MediaPlayerService.class);
+
+                intent.putExtra("song", songsList.get(pos).getPath());
+                String title = songsList.get(pos).getTitle();
+
+                String artist = songsList.get(pos).getArtist();
+
+                String duration = songsList.get(pos).getDuration();
+                startService(intent);
+
+                songNameTextView.setText(title);
+                artistNameTextView.setText(artist);
+                SongTotalTime = Integer.parseInt(duration);
+                endText.setText(createTimeText(SongTotalTime));
             }
         });
 
@@ -309,6 +339,19 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     public void openPlayList(View view) {
         startActivity(new Intent(this, PlayListActivity.class));
+    }
+
+
+    public void SaveInt(Context context, String key, int value) {
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(key, value);
+        editor.apply();
+    }
+
+    public int LoadInt(Context context, String key) {
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getInt(key, 0);
     }
 
 

@@ -70,66 +70,6 @@ public class PlayListActivity extends AppCompatActivity {
 
     }
 
-//    private ArrayList<Audio> readSongs(File root) {
-//        ArrayList<Audio> songsList = new ArrayList<>();
-//        File[] files = root.listFiles();
-//
-//        assert files != null;
-//        for (File file : files) {
-//
-//            //if the file is a directory, scan for mp3s in it recursively
-//            //else add the mp3 to songsList
-//            if (file.isDirectory()) {
-//                songsList.addAll(readSongs(file));
-//
-//
-//            } else {
-//                if (file.getName().endsWith(".mp3")|| file.getName().endsWith(".wav") || file.getName().endsWith(".aac")) {
-//                    Audio a = new Audio();
-//                    MediaMetadataRetriever metaRetriver;
-//                    metaRetriver = new MediaMetadataRetriever();
-//                    Uri uri = Uri.fromFile(file);
-//                    if (uri == null) {
-//                        Log.i("null ","nullllll");
-//                    }
-//                    metaRetriver.setDataSource(getApplicationContext(),uri);
-//                    if(metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)!=null)
-//                        a.setAlbum(metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
-//
-//                    if(metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)!=null)
-//                        a.setArtist(metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
-//
-//                    if(file.getAbsolutePath()!=null)
-//                        a.setPath(file.getAbsolutePath());
-//
-//                    if(metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)!=null)
-//                        a.setTitle(metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
-//                    Log.d("title",metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
-//
-//                    if(metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!=null)
-//                        a.setTitle(metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-//                    Log.i("duraion",metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
-//                    songsList.add(a);
-//                    metaRetriver.close();
-////                    MediaMetadataRetriever metaRetriver;
-////                    metaRetriver = new MediaMetadataRetriever();
-////                    Uri uri = Uri.fromFile(file);
-////                    metaRetriver.setDataSource(this,uri);
-////                    String a = metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-////                    String b = metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-////
-////                        Log.i("Title :", a);
-////                        Log.i("duration :", b);
-//
-//
-//                }
-//            }
-//        }
-//        //adding the list to sharedpreferences
-//        PreferencesConfig.writeInPref(this, songsList);
-//        return songsList;
-//    }
-
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private ArrayList<Audio> scanDeviceForMp3Files() {
