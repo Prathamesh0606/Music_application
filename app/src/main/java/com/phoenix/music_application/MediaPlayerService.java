@@ -133,6 +133,15 @@ public class MediaPlayerService extends Service {
         return duration;
     }
 
+    public static int getAudioSession() {
+        if (mediaPlayer != null) {
+            return mediaPlayer.getAudioSessionId();
+        }
+        else {
+            return 0;
+        }
+    }
+
     public static void pause() {
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();

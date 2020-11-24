@@ -3,8 +3,11 @@ package com.phoenix.music_application;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -25,11 +28,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.chibde.visualizer.LineVisualizer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,10 +54,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public TextView songNameTextView;
     public TextView artistNameTextView;
     static MediaPlayer mediaPlayer;
-    ImageView settingsIcon;
-    ImageView imageView;
+    Button settingsIcon;
+    CardView cardView;
+    ImageView vinylArt;
     MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-    ImageView addToFavs;
+    Button addToFavs;
     Animation animation;
     ArrayList<Audio> songsList;
     ArrayList<Audio> audioList;
@@ -65,6 +72,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     int time = 0;
     SharedPreferences sharedPreferences;
 
+    Animation fade_out, fade_in;
+    LineVisualizer lineVisualizer;
+    ObjectAnimator rotateCard;
 
     //public static final String Broadcast_PLAY_NEW_AUDIO = "com.phoenix.music_application.PlayNewAudio";
 
@@ -89,16 +99,32 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
 
         //Id implementation
-        songNameTextView = findViewById(R.id.TextTitle);
-        artistNameTextView = findViewById(R.id.TextName);
-        settingsIcon = (ImageView) findViewById(R.id.settingsIcon);
-        playBtton = findViewById(R.id.play);
-        skipToNextBtn = findViewById(R.id.nextSong);
-        addToFavs = findViewById(R.id.add_to_favs_btn);
-        startText = findViewById(R.id.TextStart);
-        endText = findViewById(R.id.TextEnd);
-        imageView = findViewById(R.id.img);
+        songNameTextView = findViewById(R.id.songTitle);
+        artistNameTextView = findViewById(R.id.artistName);
+        settingsIcon = findViewById(R.id.lyricsButton);
+        playBtton = findViewById(R.id.playPauseButton);
+        skipToNextBtn = findViewById(R.id.nextButton);
+        addToFavs = findViewById(R.id.stopButton);
+        startText = findViewById(R.id.runningTime);
+        endText = findViewById(R.id.totalTime);
+        cardView = findViewById(R.id.albumArt_cardView);
         animation = AnimationUtils.loadAnimation(this, R.anim.rotation);
+
+        fade_in = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        fade_out = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+        lineVisualizer = findViewById(R.id.lineViz);
+        vinylArt = findViewById(R.id.albumArt_vinylArt);
+
+        //rotate animation for album art
+        rotateCard = ObjectAnimator.ofFloat(cardView, "rotation", 0, 360);
+        rotateCard.setInterpolator(new LinearInterpolator());
+        rotateCard.setDuration(2500);
+        rotateCard.setRepeatCount(ObjectAnimator.INFINITE);
+        rotateCard.setRepeatMode(ObjectAnimator.RESTART);
+
+        //line visualizer attributes
+        lineVisualizer.setStrokeWidth(2);
+        lineVisualizer.setColor(ContextCompat.getColor(this, R.color.colorAccent));
 
         Intent i = getIntent();
 //        Bundle bundle = getIntent().getExtras();
@@ -151,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
 
         //Control Seek bar track line / play line
-        start = findViewById(R.id.PlayLine);
+        start = findViewById(R.id.seeker);
         if (SongTotalTime != 0) {
             start.setMax(SongTotalTime);
         }
@@ -304,27 +330,53 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             //Rotation start
             //Intent intent = new Intent(MainActivity.this, MediaPlayerService.class);
             MediaPlayerService.play();
-
+/*
             //stopService(intent);
             imageView.startAnimation(animation);
-            playBtton.animate().rotation(-180);
+            playBtton.animate().alpha(0);
             playBtton.clearAnimation();
             playBtton.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24);
+*/
+            //change icon to pause
+            playBtton.startAnimation(fade_out);
+            playBtton.setBackgroundResource(R.drawable.pausebutton_icon);
+            playBtton.startAnimation(fade_in);
+
+            //initialize audio visualization
+            lineVisualizer.setPlayer(MediaPlayerService.getAudioSession());
+
+            //circular album art with centered vinyl graphic
+            cardView.setRadius(1000);
+            vinylArt.setVisibility(View.VISIBLE);
+
+            //start rotate animation
+            if(MediaPlayerService.duration == 0) { rotateCard.start(); }
+            else { rotateCard.resume(); }
         } else {
             //Played
             //Intent intent = new Intent(MainActivity.this, MediaPlayerService.class);
             //stopService(intent);
             MediaPlayerService.pause();
+
+            //change icon to play
+            playBtton.startAnimation(fade_out);
+            playBtton.setBackgroundResource(R.drawable.playbutton_icon);
+            playBtton.startAnimation(fade_in);
+
+            //pause rotate animation
+            rotateCard.pause();
+            /*
             imageView.clearAnimation();
             playBtton.setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24);
             playBtton.animate().rotation(0);
             //playBtton.clearAnimation();
+            */
 
         }
     }
 
     boolean likeButtonpress = false;
-
+/*
     public void addToFavsBtnPressed(View view) {
         if (!likeButtonpress) {
             likeButtonpress = true;
@@ -336,7 +388,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
 
     }
-
+*/
     public void openPlayList(View view) {
         startActivity(new Intent(this, PlayListActivity.class));
     }
