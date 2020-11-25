@@ -118,9 +118,7 @@ public class MediaPlayerService extends Service {
         }
     }
 
-    public static void skipToNext() {
 
-    }
 
 
     @Nullable
