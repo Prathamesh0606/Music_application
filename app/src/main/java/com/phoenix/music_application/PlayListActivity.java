@@ -1,11 +1,7 @@
 package com.phoenix.music_application;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.database.Cursor;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,8 +13,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 
 public class PlayListActivity extends AppCompatActivity {
@@ -56,10 +54,7 @@ public class PlayListActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Intent intent = new Intent(PlayListActivity.this, MediaPlayerService.class);
-//                intent.putExtra("song", songs.get(position).getAbsolutePath());
-//                startService(intent);
-                //intent.putExtra("songList", songs);
+//
                 Intent i = new Intent(PlayListActivity.this, MainActivity.class);
                 i.putExtra("songIndex", position);
                 i.putExtra("songList", songs);

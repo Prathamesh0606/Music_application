@@ -105,7 +105,8 @@
         app:layout_constraintBottom_toTopOf="@+id/seekBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/songInfoBox" />
+        app:layout_constraintTop_toBottomOf="@+id/songInfoBox"
+        tools:ignore="MissingClass" />
 
     <RelativeLayout
         android:id="@+id/mediaButtons"

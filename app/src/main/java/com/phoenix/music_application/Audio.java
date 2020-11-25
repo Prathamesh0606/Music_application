@@ -11,13 +11,6 @@ public class Audio implements Serializable {
     private String artist;
     private String duration;
 
-//    public Audio(String path, String title, String album, String artist, String duration) {
-//        this.path = path;
-//        this.title = title;
-//        this.album = album;
-//        this.artist = artist;
-//        this.duration = duration;
-//    }
 
     public String getPath() {
         return path;

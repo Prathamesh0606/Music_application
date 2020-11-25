@@ -79,7 +79,7 @@ public class DownloadLyrics extends AsyncTask<String, Void, String> {
             JSONObject lyr = body.getJSONObject("lyrics");
             String lyrics = lyr.getString("lyrics_body");
             String[] lyricswithoutOtherCrap = lyrics.split("[/*]+");
-            //Log.i("lyrics",lyrics);
+
             LyricsActivity.textView.setText(lyricswithoutOtherCrap[0]);
 
         } catch (Exception e) {

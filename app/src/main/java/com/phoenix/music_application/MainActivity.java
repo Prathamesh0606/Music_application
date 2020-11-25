@@ -1,11 +1,5 @@
 package com.phoenix.music_application;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
@@ -14,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
-
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -35,9 +28,15 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+
 import com.chibde.visualizer.LineVisualizer;
 
-import java.io.File;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         try {
             songsList = PreferencesConfig.readFromPref(this);
 
-            //songsList = (ArrayList) i.getStringArrayListExtra("songList");
+
             int p = LoadInt(getApplicationContext(), "position");
             pos = i.getIntExtra("songIndex", p);
             SaveInt(getApplicationContext(), "position", pos);
@@ -158,22 +157,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
 
 
-//        if (songsList != null) {
-//           // song = MediaPlayer.create(this, uri);
-//
-//        }
-//        //Song Added
-//        else {
-//            song = MediaPlayer.create(this, R.raw.song);
-//        }
-        //song.setLooping(true);
-
-//        song.seekTo(0);
-//        song.setVolume(0.5f, 0.5f);
-        //SongTotalTime = MediaPlayerService.getSongDuration();
-        //Toast.makeText(this, SongTotalTime, Toast.LENGTH_SHORT).show();
-        //endText.setText(SongTotalTime);
-//        song.start();
 
 
         //Control Seek bar track line / play line
@@ -249,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         Message message = new Message();
 
                         message.what = time;
-                        //Log.i("pos", String.valueOf(MediaPlayerService.getposition()));
+
                         handler.sendMessage(message);
                         time += 1000;
                         Thread.sleep(1000);
@@ -261,24 +244,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }).start();
 
 
-        //loadAudio();
-        //play the first audio in the ArrayList
-        //playAudio(audioList.get(0).);
-//        for(Audio a:audioList) {
-//            Log.i("name",a.getTitle());
-//        }
-
-
     }
-
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        if(song !=null) {
-//            song.stop();
-//            song.release();
-//
-//        }
 
 
     @SuppressLint("HandlerLeak")
@@ -315,27 +281,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     int index = 0;
 
     public void PlayButton(View view) {
-//        if(index==0) {
-//            while(index<audioList.size())
-//            playAudio(index);
-//            index++;
-//        }
-//        Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
-//        sendBroadcast(broadcastIntent);
+//
 
         if (!MediaPlayerService.isplaying) {
-            //playAudio(0);
-            //Stopped
-            //song.start();
-            //Rotation start
-            //Intent intent = new Intent(MainActivity.this, MediaPlayerService.class);
+
             MediaPlayerService.play();
 /*
-            //stopService(intent);
-            imageView.startAnimation(animation);
-            playBtton.animate().alpha(0);
-            playBtton.clearAnimation();
-            playBtton.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24);
 */
             //change icon to pause
             playBtton.startAnimation(fade_out);
@@ -353,9 +304,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             if(MediaPlayerService.duration == 0) { rotateCard.start(); }
             else { rotateCard.resume(); }
         } else {
-            //Played
-            //Intent intent = new Intent(MainActivity.this, MediaPlayerService.class);
-            //stopService(intent);
+
             MediaPlayerService.pause();
 
             //change icon to play
@@ -365,30 +314,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             //pause rotate animation
             rotateCard.pause();
-            /*
-            imageView.clearAnimation();
-            playBtton.setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24);
-            playBtton.animate().rotation(0);
-            //playBtton.clearAnimation();
-            */
 
         }
     }
 
-    boolean likeButtonpress = false;
-/*
-    public void addToFavsBtnPressed(View view) {
-        if (!likeButtonpress) {
-            likeButtonpress = true;
-            addToFavs.setImageResource(R.drawable.ic_favoritepressed_24);
 
-        } else {
-            likeButtonpress = false;
-            addToFavs.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-        }
 
-    }
-*/
     public void openPlayList(View view) {
         startActivity(new Intent(this, PlayListActivity.class));
     }
@@ -447,6 +378,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     }
 }
+
+
+//LET THIS CODE BE HERE, I THINK WE WILL NEED IT LATER
 
 
 //    //Binding this Client to the AudioPlayer Service
