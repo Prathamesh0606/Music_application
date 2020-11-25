@@ -1,16 +1,39 @@
 package com.phoenix.music_application;
 
+import android.annotation.SuppressLint;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.session.MediaSessionManager;
+import android.net.Uri;
+import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.RemoteException;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+//import android.support.v7.app.NotificationCompat;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import java.io.IOException;
-
-//import android.support.v7.app.NotificationCompat;
+import java.util.ArrayList;
 
 /**
  * Created by Valdio Veliu on 16-07-11.
@@ -18,8 +41,16 @@ import java.io.IOException;
 public class MediaPlayerService extends Service {
 
 
+
+//    public static final String ACTION_PLAY = "com.phoenix.music_application.ACTION_PLAY";
+//    public static final String ACTION_PAUSE = "com.phoenix.music_application.ACTION_PAUSE";
+//    public static final String ACTION_PREVIOUS = "com.phoenix.music_application.ACTION_PREVIOUS";
+//    public static final String ACTION_NEXT = "com.phoenix.music_application.ACTION_NEXT";
+//    public static final String ACTION_STOP = "com.phoenix.music_application.ACTION_STOP";
+
     static MediaPlayer mediaPlayer;
     String songToPlay;
+    SeekBar seeker;
     static int duration;
     public static boolean isplaying;
 
@@ -28,12 +59,20 @@ public class MediaPlayerService extends Service {
         super.onCreate();
         Toast.makeText(this, "--service created--", Toast.LENGTH_LONG).show();
 
-
         //Time Shows
 
 
     }
 
+//    public String createTimeText(int time) {
+//        String timeText;
+//        int min = time / 1000 / 60;
+//        int sec = time / 1000 % 60;
+//        timeText = min + ":";
+//        if (sec < 10) timeText += "0";
+//        timeText += sec;
+//        return timeText;
+//    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -118,7 +157,9 @@ public class MediaPlayerService extends Service {
         }
     }
 
+    public static void skipToNext() {
 
+    }
 
 
     @Nullable
@@ -128,6 +169,50 @@ public class MediaPlayerService extends Service {
     }
 
     //MediaSession
+/*
+    public void threadMethod() {
 
+        //update playing-time
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(mediaPlayer != null) {
+                    try {
+                        Message message = new Message();
+                        message.what = mediaPlayer.getCurrentPosition();
+
+                        handler.sendMessage(message);
+
+                        Thread.sleep(1000);
+                    }catch (InterruptedException ignored) {
+
+                    }
+                }
+            }
+        }).start();
+    }
+
+    //updating seek-bar and play-time
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @SuppressLint("SetTextIl8n")
+
+        @Override
+        public void handleMessage(Message message) {
+            int progress = message.what;
+            seeker.setProgress(progress);
+
+            playTime.setText(songTime(progress));
+        }
+    };
+*/
+    //return time-text string
+    public String songTime(int time) {
+
+        int sec = time / 1000 % 60;
+
+        if(sec < 10) { return (time / 1000 / 60) + ":0" + sec; }
+        else { return (time / 1000 / 60) + ":" + sec; }
+    }
 
 }

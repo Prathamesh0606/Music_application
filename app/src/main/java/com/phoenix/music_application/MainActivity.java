@@ -44,6 +44,8 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
+import static com.phoenix.music_application.MediaPlayerService.isMediaPlayernull;
+
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     Button playBtton;
     Button skipToNextBtn;
@@ -113,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         fade_out = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         lineVisualizer = findViewById(R.id.lineViz);
         vinylArt = findViewById(R.id.albumArt_vinylArt);
+
+        start = findViewById(R.id.seeker);
 
         //rotate animation for album art
         rotateCard = ObjectAnimator.ofFloat(cardView, "rotation", 0, 360);
@@ -227,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (mediaPlayer != null) {
+                while (isMediaPlayernull()) {
                     try {
                         Message message = new Message();
 
@@ -377,6 +381,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             getPermissions();
         }
     }
+    /*
+    public int putSeeker() {
+        return findViewById(R.id.seeker);
+    }
+    
+     */
 }
 
 
