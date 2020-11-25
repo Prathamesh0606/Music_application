@@ -157,7 +157,9 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="20dp"
             android:layout_toStartOf="@id/previousButton"
-            android:background="@drawable/lyricsbutton_icon" />
+            android:background="@drawable/lyricsbutton_icon"
+            android:onClick="openPlayList"/>
+
 
         <Button
             android:id="@+id/stopButton"
@@ -167,7 +169,7 @@
             android:layout_marginStart="20dp"
             android:layout_toEndOf="@+id/nextButton"
             android:background="@drawable/stopbutton_icon"
-            android:onClick="stopSong" />
+            android:onClick="openPlayList" />
 
     </RelativeLayout>
 
