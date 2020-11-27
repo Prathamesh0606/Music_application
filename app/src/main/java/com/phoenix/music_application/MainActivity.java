@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     CardView cardView;
     ImageView vinylArt;
 
+    //button for lib
+    private Button libraryButton;
 
     MediaMetadataRetriever mmr = new MediaMetadataRetriever();
     Button addToFavs;
@@ -128,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         artistNameTextView = findViewById(R.id.artistName);
         lyricsIcon = findViewById(R.id.lyricsButton);
         playBtton = findViewById(R.id.playPauseButton);
+        settingsIcon= findViewById(R.id.settingsButton);
         skipToNextBtn = findViewById(R.id.nextButton);
         //addToFavs = findViewById(R.id.stopButton);
         startText = findViewById(R.id.runningTime);
@@ -141,6 +144,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         vinylArt = findViewById(R.id.albumArt_vinylArt);
 
         start = findViewById(R.id.seeker);
+
+        //switch from main to lib----------------------------
+        libraryButton= (Button) findViewById(R.id.libraryButton);
+        libraryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openlibActivity();
+            }
+        });
 
         //rotate animation for album art
         rotateCard = ObjectAnimator.ofFloat(cardView, "rotation", 0, 360);
@@ -217,20 +229,20 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
 
         //Switching to settings
-//        settingsIcon.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, settingsActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+        settingsIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, settingsActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         //skip to next song button onclick method
         skipToNextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (pos < songsList.size()) {
+                if (pos < songsList.size()-1) {
                     pos++;
 
                 } else pos = 0;
@@ -462,6 +474,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             getPermissions();
         }
     }
+
+
+
+    public void openlibActivity(){
+        Intent intent = new Intent(this, libActivity.class);
+        startActivity(intent);
+    }
+
     /*
     public int putSeeker() {
         return findViewById(R.id.seeker);

@@ -285,5 +285,18 @@
             android:layout_centerInParent="true"/>
 
     </RelativeLayout>
-
+    <!--
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="160dp"
+        android:layout_marginBottom="2dp"
+        android:background="#000000"
+        android:text="Library"
+        app:layout_constraintBottom_toTopOf="@+id/lineViz"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/songInfoBox" />
+        -->
 </androidx.constraintlayout.widget.ConstraintLayout>
