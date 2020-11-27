@@ -17,6 +17,8 @@
     <string name="set_storage_loc">Set a location from your storage to scan your music files from..</string>
     <string name="textview">TextView</string>
     <string name="settings">SETTINGS</string>
+    <string name="lyricsview">LyricsView</string>
+    <string name="Lyrics">lyrics</string>
 
 
     <string-array name="sleepTimes">

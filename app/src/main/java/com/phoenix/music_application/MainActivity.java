@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -24,6 +25,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +38,8 @@ import androidx.core.content.ContextCompat;
 
 import com.chibde.visualizer.LineVisualizer;
 
-
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,11 +56,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public TextView startText;
     public TextView endText;
     public TextView songNameTextView;
+
     public TextView artistNameTextView;
     static MediaPlayer mediaPlayer;
+    Button lyricsIcon;
     Button settingsIcon;
     CardView cardView;
     ImageView vinylArt;
+
+
     MediaMetadataRetriever mmr = new MediaMetadataRetriever();
     Button addToFavs;
     Animation animation;
@@ -65,17 +72,32 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     ArrayList<Audio> audioList;
     int SongTotalTime = 0;
     Uri uri;
+    public String songName, artistName = null;
     Audio a;
     static int pos;
     Cursor cursor = null;
     private MediaPlayerService player;
     boolean serviceBound = false;
+    boolean isLyricsVisible = false;
     int time = 0;
     SharedPreferences sharedPreferences;
 
     Animation fade_out, fade_in;
+    ImageView albumArt;
     LineVisualizer lineVisualizer;
     ObjectAnimator rotateCard;
+
+
+    //for lyrics
+    DownloadLyrics downloadLyrics;
+    public static TextView lyricsView;
+    static ProgressBar progressBar;
+    @SuppressLint("StaticFieldLeak")
+    static TextView textView;
+    String fullURL;
+
+    String apiKey = "&apikey=d56948ee4bc42159f087b0f2a1c07ae6";
+    String baseURL = "https://api.musixmatch.com/ws/1.1/matcher.lyrics.get";
 
     //public static final String Broadcast_PLAY_NEW_AUDIO = "com.phoenix.music_application.PlayNewAudio";
 
@@ -97,12 +119,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         getPermissions();
 
 
-
-
         //Id implementation
+
         songNameTextView = findViewById(R.id.songTitle);
+        albumArt = findViewById(R.id.albumArt_image);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        lyricsView = (TextView) findViewById(R.id.lyricsView);
         artistNameTextView = findViewById(R.id.artistName);
-        settingsIcon = findViewById(R.id.lyricsButton);
+        lyricsIcon = findViewById(R.id.lyricsButton);
         playBtton = findViewById(R.id.playPauseButton);
         skipToNextBtn = findViewById(R.id.nextButton);
         addToFavs = findViewById(R.id.stopButton);
@@ -130,9 +154,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         lineVisualizer.setColor(ContextCompat.getColor(this, R.color.colorAccent));
 
         Intent i = getIntent();
-//        Bundle bundle = getIntent().getExtras();
-//        assert bundle != null;
-        Log.e("artiust: ", "songPath");
+
+
         try {
             songsList = PreferencesConfig.readFromPref(this);
 
@@ -153,6 +176,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             startService(intent);
 
             songNameTextView.setText(title);
+            songName = title;
+            artistName = artist;
+
             artistNameTextView.setText(artist);
             SongTotalTime = Integer.parseInt(duration);
             endText.setText(createTimeText(SongTotalTime));
@@ -191,15 +217,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
 
         //Switching to settings
-        settingsIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, settingsActivity.class);
-                startActivity(intent);
-            }
-        });
+//        settingsIcon.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, settingsActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
 
+        //skip to next song button onclick method
         skipToNextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -218,11 +245,66 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 startService(intent);
 
                 songNameTextView.setText(title);
+                songName = title;
                 artistNameTextView.setText(artist);
                 SongTotalTime = Integer.parseInt(duration);
                 endText.setText(createTimeText(SongTotalTime));
             }
         });
+
+
+        //lyrics button onclick method
+
+        vinylArt.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+//                Intent i = new Intent(MainActivity.this,LyricsActivity.class);
+//                i.putExtra("artist",artistName);
+//                i.putExtra("song",songName);
+//``
+//                startActivity(i);
+
+                if (!isLyricsVisible) {
+                    try {
+                        String encodedString = URLEncoder.encode(songName, "UTF-8");
+                        String encodedArtistName = URLEncoder.encode(artistName, "UTF-8");
+                        Log.i("encoded", songName);
+                        fullURL = baseURL + "?q_track=" + encodedString + "&q_artist=" + encodedArtistName + apiKey;
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    //the textview which is supposed to be displaying lyrics
+                    cardView.setAlpha((float) 0.3);
+                    lyricsView.setVisibility(View.VISIBLE);
+                    lyricsView.setMovementMethod(new ScrollingMovementMethod());
+                    isLyricsVisible = true;
+                    downloadLyrics = new DownloadLyrics(MainActivity.this);        //asynctask class
+                    downloadLyrics.execute(fullURL);
+
+                }
+
+                return isLyricsVisible;
+            }
+        });
+
+
+        lyricsView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (isLyricsVisible) {
+                    cardView.setAlpha(1);
+                    lyricsView.setVisibility(View.INVISIBLE);
+                    isLyricsVisible = false;
+
+                }
+                return isLyricsVisible;
+            }
+
+
+        });
+
 
         //Volume control
 
@@ -321,7 +403,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         }
     }
-
 
 
     public void openPlayList(View view) {

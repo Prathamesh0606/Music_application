@@ -8,6 +8,61 @@
     android:orientation="vertical"
     android:background="#000000">
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/albumArt_cardView">
+        <!--        <LinearLayout-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_centerVertical="true"-->
+        <!--            android:layout_centerHorizontal="true"-->
+        <!--            android:orientation="vertical"-->
+        <!--            >-->
+
+        <TextView
+            android:id="@+id/lyricsView"
+            android:layout_width="wrap_content"
+            android:layout_height="300dp"
+
+            android:scrollbars="vertical"
+            android:scrollbarStyle="insideOverlay"
+            android:fadeScrollbars="true"
+            android:fadingEdge="vertical"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="@string/Lyrics"
+            android:textSize="18sp"
+            android:textStyle="bold|italic"
+            android:visibility="invisible"
+
+            tools:text="Lyrics">
+
+
+        </TextView>
+
+        <!--        </LinearLayout>-->
+
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:minWidth="40dp"
+            android:minHeight="40dp"
+            android:visibility="visible"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+
+    </RelativeLayout>
+
+
     <androidx.cardview.widget.CardView
         android:id="@+id/albumArt_cardView"
         android:layout_width="0dp"
@@ -26,8 +81,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:src="@drawable/imaginedragons"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/imaginedragons" />
 
         <ImageView
             android:id="@+id/albumArt_vinylArt"
@@ -148,7 +203,8 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="20dp"
             android:layout_toStartOf="@+id/playPauseButton"
-            android:background="@drawable/previous_song" />
+            android:background="@drawable/previous_song"
+            android:onClick="DownloadLyrics" />
 
         <Button
             android:id="@+id/lyricsButton"
@@ -157,8 +213,7 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="20dp"
             android:layout_toStartOf="@id/previousButton"
-            android:background="@drawable/lyricsbutton_icon"
-            android:onClick="openPlayList"/>
+            android:background="@drawable/lyricsbutton_icon" />
 
 
         <Button

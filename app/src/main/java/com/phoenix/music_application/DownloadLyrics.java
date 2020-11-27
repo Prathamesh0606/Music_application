@@ -64,13 +64,15 @@ public class DownloadLyrics extends AsyncTask<String, Void, String> {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        LyricsActivity.progressBar.setVisibility(View.VISIBLE);
+//        LyricsActivity.progressBar.setVisibility(View.VISIBLE);
+        MainActivity.progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        LyricsActivity.progressBar.setVisibility(View.GONE);
+//        LyricsActivity.progressBar.setVisibility(View.GONE);
+        MainActivity.progressBar.setVisibility(View.GONE);
 
         try {
             JSONObject json = new JSONObject(s);
@@ -80,7 +82,8 @@ public class DownloadLyrics extends AsyncTask<String, Void, String> {
             String lyrics = lyr.getString("lyrics_body");
             String[] lyricswithoutOtherCrap = lyrics.split("[/*]+");
 
-            LyricsActivity.textView.setText(lyricswithoutOtherCrap[0]);
+//            LyricsActivity.textView.setText(lyricswithoutOtherCrap[0]);
+            MainActivity.lyricsView.setText(lyricswithoutOtherCrap[0]);
 
         } catch (Exception e) {
             e.printStackTrace();
