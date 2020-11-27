@@ -6,9 +6,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -52,50 +49,35 @@ import static com.phoenix.music_application.MediaPlayerService.isMediaPlayernull
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     Button playBtton;
     Button skipToNextBtn;
-    public SeekBar start, end;
+    public SeekBar start;
     public TextView startText;
     public TextView endText;
     public TextView songNameTextView;
-
     public TextView artistNameTextView;
-    static MediaPlayer mediaPlayer;
     Button lyricsIcon;
     Button settingsIcon;
     CardView cardView;
     ImageView vinylArt;
-
-    //button for lib
     private Button libraryButton;
-
-    MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-    Button addToFavs;
     Animation animation;
     ArrayList<Audio> songsList;
-    ArrayList<Audio> audioList;
     int SongTotalTime = 0;
     Uri uri;
     public String songName, artistName = null;
-    Audio a;
     static int pos;
-    Cursor cursor = null;
-    private MediaPlayerService player;
-    boolean serviceBound = false;
     boolean isLyricsVisible = false;
     int time = 0;
     SharedPreferences sharedPreferences;
-
     Animation fade_out, fade_in;
     ImageView albumArt;
     LineVisualizer lineVisualizer;
     ObjectAnimator rotateCard;
-
 
     //for lyrics
     DownloadLyrics downloadLyrics;
     public static TextView lyricsView;
     static ProgressBar progressBar;
     @SuppressLint("StaticFieldLeak")
-    static TextView textView;
     String fullURL;
 
     String apiKey = "&apikey=d56948ee4bc42159f087b0f2a1c07ae6";
@@ -115,14 +97,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getPermissions();
 
-
         //Id implementation
-
         songNameTextView = findViewById(R.id.songTitle);
         albumArt = findViewById(R.id.albumArt_image);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
@@ -132,20 +111,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         playBtton = findViewById(R.id.playPauseButton);
         settingsIcon= findViewById(R.id.settingsButton);
         skipToNextBtn = findViewById(R.id.nextButton);
-        //addToFavs = findViewById(R.id.stopButton);
         startText = findViewById(R.id.runningTime);
         endText = findViewById(R.id.totalTime);
         cardView = findViewById(R.id.albumArt_cardView);
         animation = AnimationUtils.loadAnimation(this, R.anim.rotation);
-
         fade_in = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         fade_out = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         lineVisualizer = findViewById(R.id.lineViz);
         vinylArt = findViewById(R.id.albumArt_vinylArt);
-
         start = findViewById(R.id.seeker);
 
-        //switch from main to lib----------------------------
+        //switch from main to lib--
         libraryButton= (Button) findViewById(R.id.libraryButton);
         libraryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,10 +139,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         //line visualizer attributes
         lineVisualizer.setStrokeWidth(2);
-        lineVisualizer.setColor(ContextCompat.getColor(this, R.color.colorAccent));
+        lineVisualizer.setColor(ContextCompat.getColor(this, R.color.design_default_color_secondary));
 
         Intent i = getIntent();
-
 
         try {
             songsList = PreferencesConfig.readFromPref(this);
@@ -187,6 +162,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             String duration = songsList.get(pos).getDuration();
             startService(intent);
 
+            //set icon to pause
+            playBtton.setBackgroundResource(R.drawable.pausebutton_icon);
+
+            //initialize visualizer and albumArt animation
+            cardView.setRadius(1000);
+            vinylArt.setVisibility(View.VISIBLE);
+
+            rotateCard.start();
+
             songNameTextView.setText(title);
             songName = title;
             artistName = artist;
@@ -194,12 +178,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             artistNameTextView.setText(artist);
             SongTotalTime = Integer.parseInt(duration);
             endText.setText(createTimeText(SongTotalTime));
+
+            lineVisualizer.setPlayer(MediaPlayerService.getAudioSession());
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
 
         //Control Seek bar track line / play line
         start = findViewById(R.id.seeker);
@@ -227,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
         });
 
-
         //Switching to settings
         settingsIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -236,7 +218,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 startActivity(intent);
             }
         });
-
 
         //skip to next song button onclick method
         skipToNextBtn.setOnClickListener(new View.OnClickListener() {
@@ -264,17 +245,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
         });
 
-
         //lyrics button onclick method
-
-        vinylArt.setOnLongClickListener(new View.OnLongClickListener() {
+        lyricsIcon.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
-//                Intent i = new Intent(MainActivity.this,LyricsActivity.class);
-//                i.putExtra("artist",artistName);
-//                i.putExtra("song",songName);
-//``
-//                startActivity(i);
+            public void onClick(View v) {
 
                 if (!isLyricsVisible) {
                     try {
@@ -286,7 +260,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         e.printStackTrace();
                     }
 
-
                     //the textview which is supposed to be displaying lyrics
                     cardView.setAlpha((float) 0.3);
                     lyricsView.setVisibility(View.VISIBLE);
@@ -296,30 +269,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     downloadLyrics.execute(fullURL);
 
                 }
-
-                return isLyricsVisible;
-            }
-        });
-
-
-        lyricsView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (isLyricsVisible) {
+                else if (isLyricsVisible) {
                     cardView.setAlpha(1);
                     lyricsView.setVisibility(View.INVISIBLE);
                     isLyricsVisible = false;
 
                 }
-                return isLyricsVisible;
             }
-
-
         });
-
-
-        //Volume control
-
 
         //Up date song time line
         new Thread(new Runnable() {
@@ -341,9 +298,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
         }).start();
 
-
     }
-
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -358,34 +313,26 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             String Time = createTimeText(SeekBarPosition);
             String totalTime = createTimeText(SongTotalTime);
             startText.setText(Time);
-
-            //Time calculation
-            //String remainingTime = createTimeText(SongTotalTime - SeekBarPosition);
             endText.setText(totalTime);
         }
     };
 
     //Time Shows
     public String createTimeText(int time) {
-        String timeText;
-        int min = time / 1000 / 60;
+
         int sec = time / 1000 % 60;
-        timeText = min + ":";
-        if (sec < 10) timeText += "0";
-        timeText += sec;
-        return timeText;
+
+        if(sec < 10) { return (time / 1000 / 60) + ":0" + sec; }
+        else { return (time / 1000 / 60) + ":" + sec; }
     }
 
-    int index = 0;
-
     public void PlayButton(View view) {
-//
+
 
         if (!MediaPlayerService.isplaying) {
 
             MediaPlayerService.play();
-/*
-*/
+
             //change icon to pause
             playBtton.startAnimation(fade_out);
             playBtton.setBackgroundResource(R.drawable.pausebutton_icon);
@@ -399,9 +346,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             vinylArt.setVisibility(View.VISIBLE);
 
             //start rotate animation
-            if(MediaPlayerService.duration == 0) { rotateCard.start(); }
+            if(MediaPlayerService.getPosition() == 0) { rotateCard.start(); }
             else { rotateCard.resume(); }
-        } else {
+        }
+        else {
 
             MediaPlayerService.pause();
 
@@ -412,15 +360,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             //pause rotate animation
             rotateCard.pause();
-
         }
     }
 
-
-    public void openPlayList(View view) {
-        startActivity(new Intent(this, PlayListActivity.class));
-    }
-
+    //public void openPlayList(View view) { startActivity(new Intent(this, PlayListActivity.class)); }
 
     public void SaveInt(Context context, String key, int value) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -434,9 +377,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         return sharedPreferences.getInt(key, 0);
     }
 
-
     //Getting permissions from user
-    //used Easypermissions library, you can check it out here - https://codinginflow.com/tutorials/android/easypermissions
+    //used EasyPermissions library, you can check it out here - https://codinginflow.com/tutorials/android/easypermissions
     //It is simpler representation to request permissions, easier to understand
     @AfterPermissionGranted(1)
     private void getPermissions() {
@@ -475,113 +417,103 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     }
 
-
-
     public void openlibActivity(){
         Intent intent = new Intent(this, libActivity.class);
         startActivity(intent);
     }
-
-    /*
-    public int putSeeker() {
-        return findViewById(R.id.seeker);
-    }
-    
-     */
 }
-
 
 //LET THIS CODE BE HERE, I THINK WE WILL NEED IT LATER
 
 
-//    //Binding this Client to the AudioPlayer Service
-//    private ServiceConnection serviceConnection = new ServiceConnection() {
-//        @Override
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            // We've bound to LocalService, cast the IBinder and get LocalService instance
-//            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
-//            player = binder.getService();
-//            serviceBound = true;
-//
-//            Toast.makeText(MainActivity.this, "Service Bound", Toast.LENGTH_SHORT).show();
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName name) {
-//            serviceBound = false;
-//        }
-//    };
+/*    //Binding this Client to the AudioPlayer Service
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
+            player = binder.getService();
+            serviceBound = true;
 
-//    private void playAudio(int audioIndex) {
-//        //Check is service is active
-//        if (!serviceBound) {
-//            //Store Serializable audioList to SharedPreferences
-//            StorageUtil storage = new StorageUtil(getApplicationContext());
-//            storage.storeAudio(audioList);
-//            storage.storeAudioIndex(audioIndex);
-//
-//            Intent playerIntent = new Intent(this, MediaPlayerService.class);
-//            startService(playerIntent);
-//            bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-//        } else {
-//            //Store the new audioIndex to SharedPreferences
-//            StorageUtil storage = new StorageUtil(getApplicationContext());
-//            storage.storeAudioIndex(audioIndex);
-//
-//            //Service is active
-//            //Send a broadcast to the service -> PLAY_NEW_AUDIO
-//            Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
-//            sendBroadcast(broadcastIntent);
-//        }
-//    }
-//
-//    @Override
-//    public void onSaveInstanceState(Bundle savedInstanceState) {
-//        savedInstanceState.putBoolean("ServiceState", serviceBound);
-//        super.onSaveInstanceState(savedInstanceState);
-//    }
-//
-//    @Override
-//    public void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        serviceBound = savedInstanceState.getBoolean("ServiceState");
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        if (serviceBound) {
-//            unbindService(serviceConnection);
-//            //service is active
-//            player.stopSelf();
-//        }
-//    }
-//
-//    @RequiresApi(api = Build.VERSION_CODES.Q)
-//    private void loadAudio() {
-//        ContentResolver contentResolver = getContentResolver();
-//
-//        Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-//        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
-//        final String sortOrder = MediaStore.Audio.AudioColumns.TITLE + " COLLATE LOCALIZED ASC";
-////        String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
-//        Cursor cursor = contentResolver.query(uri, null, selection, null, sortOrder);
-//
-//        if (cursor != null && cursor.getCount() > 0) {
-//            audioList = new ArrayList<>();
-//            while (cursor.moveToNext()) {
-//                String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-//                String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-//                String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-//                String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-//
-//                // Save to audioList
-//                audioList.add(new Audio(data, title, album, artist));
-//            }
-//        }
-//        assert cursor != null;
-//        cursor.close();
-//    }
-//
-//
-//}
+            Toast.makeText(MainActivity.this, "Service Bound", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceBound = false;
+        }
+    };
+
+    private void playAudio(int audioIndex) {
+        //Check is service is active
+        if (!serviceBound) {
+            //Store Serializable audioList to SharedPreferences
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            storage.storeAudio(audioList);
+            storage.storeAudioIndex(audioIndex);
+
+            Intent playerIntent = new Intent(this, MediaPlayerService.class);
+            startService(playerIntent);
+            bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        } else {
+            //Store the new audioIndex to SharedPreferences
+            StorageUtil storage = new StorageUtil(getApplicationContext());
+            storage.storeAudioIndex(audioIndex);
+
+            //Service is active
+            //Send a broadcast to the service -> PLAY_NEW_AUDIO
+            Intent broadcastIntent = new Intent(Broadcast_PLAY_NEW_AUDIO);
+            sendBroadcast(broadcastIntent);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putBoolean("ServiceState", serviceBound);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        serviceBound = savedInstanceState.getBoolean("ServiceState");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (serviceBound) {
+            unbindService(serviceConnection);
+            //service is active
+            player.stopSelf();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private void loadAudio() {
+        ContentResolver contentResolver = getContentResolver();
+
+        Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+        final String sortOrder = MediaStore.Audio.AudioColumns.TITLE + " COLLATE LOCALIZED ASC";
+//        String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
+        Cursor cursor = contentResolver.query(uri, null, selection, null, sortOrder);
+
+        if (cursor != null && cursor.getCount() > 0) {
+            audioList = new ArrayList<>();
+            while (cursor.moveToNext()) {
+                String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+
+                // Save to audioList
+                audioList.add(new Audio(data, title, album, artist));
+            }
+        }
+        assert cursor != null;
+        cursor.close();
+    }
+
+
+}*/

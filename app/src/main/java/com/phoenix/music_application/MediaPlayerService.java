@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -13,40 +12,17 @@ import java.io.IOException;
 
 //import android.support.v7.app.NotificationCompat;
 
-/**
- * Created by Valdio Veliu on 16-07-11.
- */
 public class MediaPlayerService extends Service {
-
-
-
-
 
     static MediaPlayer mediaPlayer;
     String songToPlay;
-    SeekBar seeker;
-    static int duration;
     public static boolean isplaying;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Toast.makeText(this, "--service created--", Toast.LENGTH_LONG).show();
-
-        //Time Shows
-
-
     }
-
-//    public String createTimeText(int time) {
-//        String timeText;
-//        int min = time / 1000 / 60;
-//        int sec = time / 1000 % 60;
-//        timeText = min + ":";
-//        if (sec < 10) timeText += "0";
-//        timeText += sec;
-//        return timeText;
-//    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -69,9 +45,7 @@ public class MediaPlayerService extends Service {
 
 
         return Service.START_STICKY;
-//        return super.onStartCommand(intent, flags, startId);
     }
-
 
     @Override
     public void onDestroy() {
@@ -89,32 +63,18 @@ public class MediaPlayerService extends Service {
         else return false;
     }
 
-    public static int getposition() {
-        int currentPosition = mediaPlayer.getCurrentPosition();
-        return currentPosition;
-    }
+    public static int getPosition() { return mediaPlayer.getCurrentPosition(); }
 
-    public static void seekto(int prog) {
-        mediaPlayer.seekTo(prog);
-    }
+    public static void seekto(int prog) { mediaPlayer.seekTo(prog); }
 
     public static int getSongDuration() {
-        if (mediaPlayer != null) {
-            duration = mediaPlayer.getDuration();
-
-        } else {
-            duration = 0;
+        if (mediaPlayer != null) { return mediaPlayer.getDuration(); }
+        else { return 0; }
         }
-        return duration;
-    }
 
     public static int getAudioSession() {
-        if (mediaPlayer != null) {
-            return mediaPlayer.getAudioSessionId();
-        }
-        else {
-            return 0;
-        }
+        if (mediaPlayer != null) { return mediaPlayer.getAudioSessionId(); }
+        else { return 0; }
     }
 
     public static void pause() {
@@ -131,10 +91,7 @@ public class MediaPlayerService extends Service {
         }
     }
 
-    public static void skipToNext() {
-
-    }
-
+    public static void skipToNext() { }
 
     @Nullable
     @Override
@@ -142,9 +99,7 @@ public class MediaPlayerService extends Service {
         return null;
     }
 
-    //MediaSession
-/*
-    public void threadMethod() {
+    /*public void threadMethod() {
 
         //update playing-time
         new Thread(new Runnable() {
@@ -173,20 +128,12 @@ public class MediaPlayerService extends Service {
 
         @Override
         public void handleMessage(Message message) {
+
             int progress = message.what;
             seeker.setProgress(progress);
 
             playTime.setText(songTime(progress));
         }
-    };
-*/
-    //return time-text string
-    public String songTime(int time) {
-
-        int sec = time / 1000 % 60;
-
-        if(sec < 10) { return (time / 1000 / 60) + ":0" + sec; }
-        else { return (time / 1000 / 60) + ":" + sec; }
-    }
+    };*/
 
 }
