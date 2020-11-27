@@ -17,6 +17,7 @@ import java.util.Objects;
 
 
 public class settingsActivity extends AppCompatActivity {
+
     DialogProperties properties;
     FilePickerDialog dialog;
     static String folderPath = null;
@@ -37,9 +38,7 @@ public class settingsActivity extends AppCompatActivity {
         properties.offset = new File(DialogConfigs.DEFAULT_DIR);
         properties.extensions = null;
         properties.show_hidden_files = false;
-
     }
-
 
     public void setStorageLoc(View view) {
 
@@ -59,14 +58,9 @@ public class settingsActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    public void setSleepTimer(View view) { new sleepTimerDialogFragment().show(getSupportFragmentManager(), "fragmentDialog"); }
 
-    public void setSleepTimer(View view) {
-        new sleepTimerDialogFragment().show(getSupportFragmentManager(), "fragmentDialog");
-
-    }
-
-    public void about(View view) {
-    }
+    public void about(View view) {}
 
 }
 

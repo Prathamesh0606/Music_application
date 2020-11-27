@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         lyricsIcon = findViewById(R.id.lyricsButton);
         playBtton = findViewById(R.id.playPauseButton);
         skipToNextBtn = findViewById(R.id.nextButton);
-        addToFavs = findViewById(R.id.stopButton);
+        //addToFavs = findViewById(R.id.stopButton);
         startText = findViewById(R.id.runningTime);
         endText = findViewById(R.id.totalTime);
         cardView = findViewById(R.id.albumArt_cardView);
