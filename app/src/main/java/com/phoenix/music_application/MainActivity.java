@@ -105,26 +105,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         metaRetriver = new MediaMetadataRetriever();
 
         //Id implementation
-        songNameTextView = findViewById(R.id.songTitle);
-        albumArt = findViewById(R.id.albumArt_image);
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        lyricsView = (TextView) findViewById(R.id.lyricsView);
-        artistNameTextView = findViewById(R.id.artistName);
-        lyricsIcon = findViewById(R.id.lyricsButton);
-        playBtton = findViewById(R.id.playPauseButton);
-        settingsIcon= findViewById(R.id.settingsButton);
-        skipToNextBtn = findViewById(R.id.nextButton);
-        skipToPrevButton = findViewById(R.id.previousButton);
-        startText = findViewById(R.id.runningTime);
-        endText = findViewById(R.id.totalTime);
-        cardView = findViewById(R.id.albumArt_cardView);
-        animation = AnimationUtils.loadAnimation(this, R.anim.rotation);
-        fade_in = AnimationUtils.loadAnimation(this, R.anim.fade_in);
-        fade_out = AnimationUtils.loadAnimation(this, R.anim.fade_out);
-        lineVisualizer = findViewById(R.id.lineViz);
-        vinylArt = findViewById(R.id.albumArt_vinylArt);
-        start = findViewById(R.id.seeker);
-
+        init();
         //switch from main to lib--
         libraryButton= (Button) findViewById(R.id.libraryButton);
         libraryButton.setOnClickListener(new View.OnClickListener() {
@@ -481,6 +462,34 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public int LoadInt(Context context, String key) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getInt(key, 0);
+    }
+
+
+    //Initializations
+
+    public void init() {
+        songNameTextView = findViewById(R.id.songTitle);
+        albumArt = findViewById(R.id.albumArt_image);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        lyricsView = (TextView) findViewById(R.id.lyricsView);
+        artistNameTextView = findViewById(R.id.artistName);
+        lyricsIcon = findViewById(R.id.lyricsButton);
+        playBtton = findViewById(R.id.playPauseButton);
+        settingsIcon = findViewById(R.id.settingsButton);
+        skipToNextBtn = findViewById(R.id.nextButton);
+        skipToPrevButton = findViewById(R.id.previousButton);
+        startText = findViewById(R.id.runningTime);
+        endText = findViewById(R.id.totalTime);
+        cardView = findViewById(R.id.albumArt_cardView);
+        animation = AnimationUtils.loadAnimation(this, R.anim.rotation);
+        fade_in = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        fade_out = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+        lineVisualizer = findViewById(R.id.lineViz);
+        vinylArt = findViewById(R.id.albumArt_vinylArt);
+        start = findViewById(R.id.seeker);
+
+        //switch from main to lib--
+        libraryButton = (Button) findViewById(R.id.libraryButton);
     }
 
     //Getting permissions from user
