@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -56,8 +57,11 @@ public class PlayListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //
                 Intent i = new Intent(PlayListActivity.this, MainActivity.class);
+                Bundle b = new Bundle();
+
                 i.putExtra("songIndex", position);
-                i.putExtra("songList", songs);
+                b.putSerializable("songList", (ArrayList<Audio>) songs);
+                i.putExtras(b);
                 startActivity(i);
 
             }
@@ -74,7 +78,6 @@ public class PlayListActivity extends AppCompatActivity {
                 MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.ARTIST,
                 MediaStore.Audio.Media.DATA,
-                MediaStore.Audio.Media.DISPLAY_NAME,
                 MediaStore.Audio.Media.DURATION,
 
         };
@@ -83,35 +86,44 @@ public class PlayListActivity extends AppCompatActivity {
 
         Uri uri;
         Cursor cursor = null;
+        uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         try {
             if (settingsActivity.folderPath == null) {
-                uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+
+                cursor = getContentResolver().query(uri, projection, selection, null, sortOrder);
             } else {
-                uri = Uri.fromFile(new File(settingsActivity.folderPath));
+
+                Toast.makeText(this, settingsActivity.folderPath, Toast.LENGTH_LONG).show();
+                File base = new File(settingsActivity.folderPath);
+                String p = base.getName();
+                cursor = getContentResolver().query(uri, projection, MediaStore.Audio.Media.DATA + " like ? ", new String[]{"%" + p + "%"}, sortOrder);
             }
 
-            cursor = getContentResolver().query(uri, projection, selection, null, sortOrder);
+
             if (cursor != null) {
                 cursor.moveToFirst();
-
+//
 
                 while (!cursor.isAfterLast()) {
                     Audio a = new Audio();
-                    //a.setTitle(cursor.getString(0));
-                    a.setArtist(cursor.getString(1));
+                    String t = cursor.getString(0);
+                    String ar = cursor.getString(1);
+                    String p = cursor.getString(2);
+                    a.setTitle(t);
+                    a.setArtist(ar);
 
                     a.setPath(cursor.getString(2));
-                    a.setTitle(cursor.getString(0));
-                    a.setDuration(cursor.getString(4));
-                    mp3Files.add(a);
-                    cursor.moveToNext();
 
+                    a.setDuration(cursor.getString(3));
+                    if (p != null) {
+                        mp3Files.add(a);
+
+                    }
+                    cursor.moveToNext();
                 }
 
+
             }
-
-            // print to see list of mp3 files
-
         } catch (Exception e) {
             Log.e("TAG", e.toString());
         } finally {
@@ -119,7 +131,9 @@ public class PlayListActivity extends AppCompatActivity {
                 cursor.close();
             }
         }
-        PreferencesConfig.writeInPref(this, mp3Files);
+        if (settingsActivity.folderPath == null)
+            PreferencesConfig.writeInPref(this, mp3Files);
         return mp3Files;
+
     }
 }

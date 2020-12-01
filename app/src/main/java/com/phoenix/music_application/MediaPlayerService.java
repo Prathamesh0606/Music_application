@@ -21,14 +21,14 @@ public class MediaPlayerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Toast.makeText(this, "--service created--", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "--service created--", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "--service started--", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "--service started--", Toast.LENGTH_SHORT).show();
         songToPlay = intent.getStringExtra("song");
-        //Uri uri = Uri.parse(songToPlay);
+
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
@@ -51,16 +51,14 @@ public class MediaPlayerService extends Service {
     public void onDestroy() {
 
         super.onDestroy();
-        Toast.makeText(this, "--service destroyed--", Toast.LENGTH_LONG).show();
-        mediaPlayer.stop();
+        Toast.makeText(this, "--service destroyed--", Toast.LENGTH_SHORT).show();
+        //mediaPlayer.stop();
         isplaying = false;
-        mediaPlayer.release();
+        //mediaPlayer.release();
     }
 
     public static boolean isMediaPlayernull() {
-        if (mediaPlayer == null)
-            return true;
-        else return false;
+        return mediaPlayer == null;
     }
 
     public static int getPosition() { return mediaPlayer.getCurrentPosition(); }
@@ -68,9 +66,9 @@ public class MediaPlayerService extends Service {
     public static void seekto(int prog) { mediaPlayer.seekTo(prog); }
 
     public static int getSongDuration() {
-        if (mediaPlayer != null) { return mediaPlayer.getDuration(); }
-        else { return 0; }
-        }
+        return mediaPlayer.getDuration();
+
+    }
 
     public static int getAudioSession() {
         if (mediaPlayer != null) { return mediaPlayer.getAudioSessionId(); }
@@ -91,7 +89,6 @@ public class MediaPlayerService extends Service {
         }
     }
 
-    public static void skipToNext() { }
 
     @Nullable
     @Override
@@ -99,41 +96,6 @@ public class MediaPlayerService extends Service {
         return null;
     }
 
-    /*public void threadMethod() {
 
-        //update playing-time
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(mediaPlayer != null) {
-                    try {
-                        Message message = new Message();
-                        message.what = mediaPlayer.getCurrentPosition();
-
-                        handler.sendMessage(message);
-
-                        Thread.sleep(1000);
-                    }catch (InterruptedException ignored) {
-
-                    }
-                }
-            }
-        }).start();
-    }
-
-    //updating seek-bar and play-time
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
-        @SuppressLint("SetTextIl8n")
-
-        @Override
-        public void handleMessage(Message message) {
-
-            int progress = message.what;
-            seeker.setProgress(progress);
-
-            playTime.setText(songTime(progress));
-        }
-    };*/
 
 }

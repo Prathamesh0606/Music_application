@@ -6,14 +6,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -44,11 +46,9 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-import static com.phoenix.music_application.MediaPlayerService.isMediaPlayernull;
-
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     Button playBtton;
-    Button skipToNextBtn;
+    Button skipToNextBtn, skipToPrevButton;
     public SeekBar start;
     public TextView startText;
     public TextView endText;
@@ -66,17 +66,21 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public String songName, artistName = null;
     static int pos;
     boolean isLyricsVisible = false;
-    int time = 0;
+
     SharedPreferences sharedPreferences;
     Animation fade_out, fade_in;
     ImageView albumArt;
     LineVisualizer lineVisualizer;
     ObjectAnimator rotateCard;
 
+    //for album art
+    MediaMetadataRetriever metaRetriver;
+    byte[] art;
+
     //for lyrics
     DownloadLyrics downloadLyrics;
-    public static TextView lyricsView;
-    static ProgressBar progressBar;
+    public TextView lyricsView;
+    ProgressBar progressBar;
     @SuppressLint("StaticFieldLeak")
     String fullURL;
 
@@ -85,8 +89,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     //public static final String Broadcast_PLAY_NEW_AUDIO = "com.phoenix.music_application.PlayNewAudio";
 
-
-    private final int DEFAULT_PERMISSIONS_REQ_CODE = 1;
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -100,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getPermissions();
+        metaRetriver = new MediaMetadataRetriever();
 
         //Id implementation
         songNameTextView = findViewById(R.id.songTitle);
@@ -111,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         playBtton = findViewById(R.id.playPauseButton);
         settingsIcon= findViewById(R.id.settingsButton);
         skipToNextBtn = findViewById(R.id.nextButton);
+        skipToPrevButton = findViewById(R.id.previousButton);
         startText = findViewById(R.id.runningTime);
         endText = findViewById(R.id.totalTime);
         cardView = findViewById(R.id.albumArt_cardView);
@@ -143,18 +147,27 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         Intent i = getIntent();
 
+
         try {
+
+//            if(songsList==null)
             songsList = PreferencesConfig.readFromPref(this);
 
 
             int p = LoadInt(getApplicationContext(), "position");
             pos = i.getIntExtra("songIndex", p);
+
             SaveInt(getApplicationContext(), "position", pos);
             String songPath = songsList.get(pos).getPath();
+            metaRetriver.setDataSource(songPath);
+            art = metaRetriver.getEmbeddedPicture();
 
             uri = Uri.parse(songPath);
             Intent intent = new Intent(MainActivity.this, MediaPlayerService.class);
-            intent.putExtra("song", songsList.get(pos).getPath());
+            intent.putExtra("song", songPath);
+
+
+            albumArt.setBackgroundColor(Color.GRAY);
             String title = songsList.get(pos).getTitle();
 
             String artist = songsList.get(pos).getArtist();
@@ -180,7 +193,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             endText.setText(createTimeText(SongTotalTime));
 
             lineVisualizer.setPlayer(MediaPlayerService.getAudioSession());
+
+            Bitmap songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
+            albumArt.setImageBitmap(songImage);
         } catch (Exception e) {
+            albumArt.setBackgroundColor(Color.GRAY);
+
+            //artistNameTextView.setText("Unknown Artist");
+
             e.printStackTrace();
         }
 
@@ -189,10 +209,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (SongTotalTime != 0) {
             start.setMax(SongTotalTime);
         }
+
+
         start.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser) {
+                if (!MediaPlayerService.isMediaPlayernull() && fromUser) {
 
                     start.setProgress(progress);
                     MediaPlayerService.seekto(progress);
@@ -209,6 +231,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             }
         });
+
 
         //Switching to settings
         settingsIcon.setOnClickListener(new View.OnClickListener() {
@@ -230,20 +253,76 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 Intent intent = new Intent(MainActivity.this, MediaPlayerService.class);
 
                 intent.putExtra("song", songsList.get(pos).getPath());
+                albumArt.setImageResource(R.drawable.album_art_default);
                 String title = songsList.get(pos).getTitle();
 
                 String artist = songsList.get(pos).getArtist();
 
                 String duration = songsList.get(pos).getDuration();
+                metaRetriver.setDataSource(songsList.get(pos).getPath());
+
+                //album art implementation
+                try {
+                    art = metaRetriver.getEmbeddedPicture();
+                    Bitmap songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
+                    albumArt.setImageBitmap(songImage);
+                } catch (Exception e) {
+                    albumArt.setBackgroundColor(Color.GRAY);
+                }
+//
                 startService(intent);
 
                 songNameTextView.setText(title);
                 songName = title;
+
                 artistNameTextView.setText(artist);
                 SongTotalTime = Integer.parseInt(duration);
                 endText.setText(createTimeText(SongTotalTime));
+                start.setMax(SongTotalTime);
             }
         });
+
+
+        //skip to previous song
+        skipToPrevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (pos > 0) {
+                    pos--;
+
+                } else pos = 0;
+                Intent intent = new Intent(MainActivity.this, MediaPlayerService.class);
+
+                intent.putExtra("song", songsList.get(pos).getPath());
+                albumArt.setImageResource(R.drawable.album_art_default);
+                String title = songsList.get(pos).getTitle();
+
+                String artist = songsList.get(pos).getArtist();
+
+                String duration = songsList.get(pos).getDuration();
+                metaRetriver.setDataSource(songsList.get(pos).getPath());
+
+                //album art implementation
+                try {
+                    art = metaRetriver.getEmbeddedPicture();
+                    Bitmap songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
+                    albumArt.setImageBitmap(songImage);
+                } catch (Exception e) {
+                    albumArt.setBackgroundColor(Color.GRAY);
+                }
+//
+                startService(intent);
+
+                songNameTextView.setText(title);
+                songName = title;
+
+                artistNameTextView.setText(artist);
+                SongTotalTime = Integer.parseInt(duration);
+                endText.setText(createTimeText(SongTotalTime));
+                start.setMax(SongTotalTime);
+            }
+        });
+
 
         //lyrics button onclick method
         lyricsIcon.setOnClickListener(new View.OnClickListener() {
@@ -254,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     try {
                         String encodedString = URLEncoder.encode(songName, "UTF-8");
                         String encodedArtistName = URLEncoder.encode(artistName, "UTF-8");
-                        Log.i("encoded", songName);
+
                         fullURL = baseURL + "?q_track=" + encodedString + "&q_artist=" + encodedArtistName + apiKey;
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
@@ -277,52 +356,79 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 }
             }
         });
+        MainActivity.this.runOnUiThread(new Runnable() {
 
-        //Up date song time line
-        new Thread(new Runnable() {
             @Override
             public void run() {
-                while (isMediaPlayernull()) {
-                    try {
-                        Message message = new Message();
+                if (!MediaPlayerService.isMediaPlayernull()) {
+                    int mCurrentPosition = MediaPlayerService.getPosition();
+                    startText.setText(createTimeText(mCurrentPosition));
+                    start.setProgress(mCurrentPosition);
 
-                        message.what = time;
 
-                        handler.sendMessage(message);
-                        time += 1000;
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ignored) {
+                    //to play next song automatically after completion of current
+                    //same code as skipToNextBtn
+                    if (mCurrentPosition >= MediaPlayerService.getSongDuration()) {
+                        if (pos < songsList.size() - 1) {
+                            pos++;
+
+                        } else pos = 0;
+                        Intent intent = new Intent(MainActivity.this, MediaPlayerService.class);
+
+                        intent.putExtra("song", songsList.get(pos).getPath());
+
+
+                        albumArt.setImageResource(R.drawable.album_art_default);
+                        String title = songsList.get(pos).getTitle();
+
+                        String artist = songsList.get(pos).getArtist();
+
+                        String duration = songsList.get(pos).getDuration();
+                        metaRetriver.setDataSource(songsList.get(pos).getPath());
+                        SongTotalTime = Integer.parseInt(duration);
+                        start.setMax(SongTotalTime);
+
+                        //album art implementation
+                        try {
+                            art = metaRetriver.getEmbeddedPicture();
+                            Bitmap songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
+                            albumArt.setImageBitmap(songImage);
+                        } catch (Exception e) {
+                            albumArt.setBackgroundColor(Color.GRAY);
+                        }
+//
+                        startService(intent);
+
+                        songNameTextView.setText(title);
+                        songName = title;
+
+                        artistNameTextView.setText(artist);
+                        SongTotalTime = Integer.parseInt(duration);
+                        endText.setText(createTimeText(SongTotalTime));
 
                     }
                 }
+
+                mHandler.postDelayed(this, 1000);
             }
-        }).start();
+        });
+
 
     }
 
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
-        @SuppressLint("SetTextI18n")
-        @Override
-        public void handleMessage(Message message) {
-            int SeekBarPosition = message.what;
-            //Update song seek bar
-            start.setProgress(SeekBarPosition);
 
-            //Update Labels
-            String Time = createTimeText(SeekBarPosition);
-            String totalTime = createTimeText(SongTotalTime);
-            startText.setText(Time);
-            endText.setText(totalTime);
-        }
-    };
+    private final Handler mHandler = new Handler();
+//Make sure you update Seekbar on UI thread
+
 
     //Time Shows
     public String createTimeText(int time) {
 
         int sec = time / 1000 % 60;
 
-        if(sec < 10) { return (time / 1000 / 60) + ":0" + sec; }
+        if (sec < 10) {
+            return (time / 1000 / 60) + ":0" + sec;
+        }
         else { return (time / 1000 / 60) + ":" + sec; }
     }
 
@@ -386,6 +492,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (EasyPermissions.hasPermissions(this, perms)) {
             Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
         } else {
+            int DEFAULT_PERMISSIONS_REQ_CODE = 1;
             EasyPermissions.requestPermissions(this, "We need permissions to read songs from storage",
                     DEFAULT_PERMISSIONS_REQ_CODE, perms);
         }

@@ -51,9 +51,11 @@ public class settingsActivity extends AppCompatActivity {
             @Override
             public void onSelectedFilePaths(String[] files) {
                 Log.i("selected", files[0]);
+//                Toast.makeText(this, files[0], Toast.LENGTH_SHORT).show();
                 folderPath = files[0];
 
             }
+
         });
         dialog.show();
     }
