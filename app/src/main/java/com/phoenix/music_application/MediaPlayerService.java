@@ -57,13 +57,21 @@ public class MediaPlayerService extends Service {
         //mediaPlayer.release();
     }
 
+    public static void replaySong() {
+        mediaPlayer.seekTo(0);
+    }
+
     public static boolean isMediaPlayernull() {
         return mediaPlayer == null;
     }
 
-    public static int getPosition() { return mediaPlayer.getCurrentPosition(); }
+    public static int getPosition() {
+        return mediaPlayer.getCurrentPosition();
+    }
 
-    public static void seekto(int prog) { mediaPlayer.seekTo(prog); }
+    public static void seekto(int prog) {
+        mediaPlayer.seekTo(prog);
+    }
 
     public static int getSongDuration() {
         return mediaPlayer.getDuration();

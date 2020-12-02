@@ -40,6 +40,7 @@ import com.chibde.visualizer.LineVisualizer;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     Button settingsIcon;
     CardView cardView;
     ImageView vinylArt;
-    private Button libraryButton;
+    private Button libraryButton, shuffleButton, replayButton;
     Animation animation;
     ArrayList<Audio> songsList;
     int SongTotalTime = 0;
@@ -72,15 +73,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     ImageView albumArt;
     LineVisualizer lineVisualizer;
     ObjectAnimator rotateCard;
-
+    static boolean isFirstTimeOpeningApp = true;
     //for album art
     MediaMetadataRetriever metaRetriver;
     byte[] art;
 
     //for lyrics
     DownloadLyrics downloadLyrics;
-    public TextView lyricsView;
-    ProgressBar progressBar;
+    public static TextView lyricsView;
+    static ProgressBar progressBar;
     @SuppressLint("StaticFieldLeak")
     String fullURL;
 
@@ -138,23 +139,25 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             int p = LoadInt(getApplicationContext(), "position");
             pos = i.getIntExtra("songIndex", p);
 
-            SaveInt(getApplicationContext(), "position", pos);
+
             String songPath = songsList.get(pos).getPath();
+
+            if (pos != p || isFirstTimeOpeningApp) {
+                Intent intent = new Intent(MainActivity.this, MediaPlayerService.class);
+                intent.putExtra("song", songPath);
+                startService(intent);
+                isFirstTimeOpeningApp = false;
+            }
+
             metaRetriver.setDataSource(songPath);
             art = metaRetriver.getEmbeddedPicture();
-
-            uri = Uri.parse(songPath);
-            Intent intent = new Intent(MainActivity.this, MediaPlayerService.class);
-            intent.putExtra("song", songPath);
-
-
             albumArt.setBackgroundColor(Color.GRAY);
             String title = songsList.get(pos).getTitle();
 
             String artist = songsList.get(pos).getArtist();
 
             String duration = songsList.get(pos).getDuration();
-            startService(intent);
+
 
             //set icon to pause
             playBtton.setBackgroundResource(R.drawable.pausebutton_icon);
@@ -183,8 +186,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             //artistNameTextView.setText("Unknown Artist");
 
             e.printStackTrace();
+
         }
 
+        SaveInt(getApplicationContext(), "position", pos);
         //Control Seek bar track line / play line
         start = findViewById(R.id.seeker);
         if (SongTotalTime != 0) {
@@ -328,13 +333,28 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     downloadLyrics = new DownloadLyrics(MainActivity.this);        //asynctask class
                     downloadLyrics.execute(fullURL);
 
-                }
-                else if (isLyricsVisible) {
+                } else if (isLyricsVisible) {
                     cardView.setAlpha(1);
                     lyricsView.setVisibility(View.INVISIBLE);
                     isLyricsVisible = false;
 
                 }
+            }
+        });
+
+
+        shuffleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Collections.shuffle(songsList);
+                Toast.makeText(MainActivity.this, "shuffling...", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        replayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MediaPlayerService.replaySong();
             }
         });
         MainActivity.this.runOnUiThread(new Runnable() {
@@ -478,6 +498,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         settingsIcon = findViewById(R.id.settingsButton);
         skipToNextBtn = findViewById(R.id.nextButton);
         skipToPrevButton = findViewById(R.id.previousButton);
+
         startText = findViewById(R.id.runningTime);
         endText = findViewById(R.id.totalTime);
         cardView = findViewById(R.id.albumArt_cardView);
@@ -487,6 +508,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         lineVisualizer = findViewById(R.id.lineViz);
         vinylArt = findViewById(R.id.albumArt_vinylArt);
         start = findViewById(R.id.seeker);
+        shuffleButton = findViewById(R.id.shuffleButton);
+        replayButton = findViewById(R.id.repeatButton);
 
         //switch from main to lib--
         libraryButton = (Button) findViewById(R.id.libraryButton);
@@ -499,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private void getPermissions() {
         String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO};
         if (EasyPermissions.hasPermissions(this, perms)) {
-            Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
         } else {
             int DEFAULT_PERMISSIONS_REQ_CODE = 1;
             EasyPermissions.requestPermissions(this, "We need permissions to read songs from storage",
