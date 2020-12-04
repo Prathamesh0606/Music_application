@@ -38,11 +38,10 @@ public class CreateNotification {
                     .setStyle(new Notification.MediaStyle()
                             .setShowActionsInCompactView( 0,1,2)
                             .setMediaSession(mediaSessionCompat.getSessionToken()))
-
-                    .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-                            .setShowActionsInCompactView(0, 1, 2)
-                            .setMediaSession(mediaSessionCompat.getSessionToken()))
                     */
+                    .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+                            //.setShowActionsInCompactView(0, 1, 2)
+                            .setMediaSession(mediaSessionCompat.getSessionToken()))
                     .build();
 
             notificationManagerCompat.notify(1, notification);
