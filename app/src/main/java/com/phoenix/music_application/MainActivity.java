@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     ImageView vinylArt;
     private Button libraryButton, shuffleButton, replayButton;
     Animation animation;
-    ArrayList<Audio> songsList;
+    public static ArrayList<Audio> songsList;
     int SongTotalTime = 0;
     Uri uri;
     public String songName, artistName = null;
