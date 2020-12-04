@@ -5,7 +5,6 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,7 +35,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import com.chibde.visualizer.LineVisualizer;
@@ -606,11 +604,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void buildnotification(){
+        Bitmap songImage;
         notificationTitle = songsList.get(pos).getTitle();
-        Bitmap songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
-        albumArt.setImageBitmap(songImage);
+        if (art != null) {
+            songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
+
+            albumArt.setImageBitmap(songImage);
+        } else {
+            songImage = BitmapFactory.decodeResource(getResources(), R.drawable.album_art_default);
+        }
         CreateNotification.createNotification(MainActivity.this, songsList.get(pos), R.drawable.pausebutton_icon,
-                1, songsList.size()-1, songImage);
+                1, songsList.size() - 1, songImage);
     }
 
     //------------------------------------------------

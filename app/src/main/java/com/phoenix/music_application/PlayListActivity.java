@@ -25,7 +25,7 @@ public class PlayListActivity extends AppCompatActivity {
     ListView listView;
     String[] songNames;
     File file;
-    ArrayList<String> artistNames = new ArrayList<String>(), albumNames = new ArrayList<String>();
+    ArrayList<String> artistNames, albumNames;
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
@@ -45,13 +45,8 @@ public class PlayListActivity extends AppCompatActivity {
 
         for (int i = 0; i < songs.size(); i++) { Log.i("null" ,songs.get(i).getTitle()); }
 
-        final ArrayList<ArrayList<Audio>> artistSongs = scanDeviceForArtistMp3Files();
+        //final ArrayList<ArrayList<Audio>> artistSongs = scanDeviceForArtistMp3Files();
         //final ArrayList<ArrayList<Audio>> albumSongs = scanDeviceForAlbumMp3Files();
-
-//        for (int i = 0; i < artistSongs.size(); i++) {
-//            for (int j = 0; j < artistSongs.get(i).size(); j++)
-//                Log.i(artistNames.get(i) ,artistSongs.get(i).get(j).getTitle());
-//        }
 
         songNames = new String[songs.size()];
 
