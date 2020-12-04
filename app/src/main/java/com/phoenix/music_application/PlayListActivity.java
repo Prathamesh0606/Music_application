@@ -43,7 +43,7 @@ public class PlayListActivity extends AppCompatActivity {
         }
         final ArrayList<Audio> songs = scanDeviceForMp3Files();
 
-        for (int i = 0; i < songs.size(); i++) { Log.i("null" ,songs.get(i).getTitle()); }
+        //for (int i = 0; i < songs.size(); i++) { Log.i("null" ,songs.get(i).getTitle()); }
 
         //final ArrayList<ArrayList<Audio>> artistSongs = scanDeviceForArtistMp3Files();
         //final ArrayList<ArrayList<Audio>> albumSongs = scanDeviceForAlbumMp3Files();
