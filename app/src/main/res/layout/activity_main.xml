@@ -127,7 +127,8 @@
                 android:textColor="@android:color/white"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:gravity="center_horizontal"/>
+                android:gravity="center_horizontal"
+                />
 
             <TextView
                 android:id="@+id/artistName"
