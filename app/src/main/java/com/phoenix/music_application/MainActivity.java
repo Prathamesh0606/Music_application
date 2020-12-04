@@ -366,7 +366,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     startText.setText(createTimeText(mCurrentPosition));
                     start.setProgress(mCurrentPosition);
 
+                    if (!MediaPlayerService.isPlaying()) {
+                        playBtton.startAnimation(fade_out);
+                        playBtton.setBackgroundResource(R.drawable.playbutton_icon);
+                        playBtton.startAnimation(fade_in);
 
+                        //pause rotate animation
+                        rotateCard.pause();
+
+                    }
                     //to play next song automatically after completion of current
                     //same code as skipToNextBtn
                     if (mCurrentPosition >= MediaPlayerService.getSongDuration()) {

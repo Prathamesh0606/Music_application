@@ -10,7 +10,25 @@ public class Audio implements Serializable {
     private String album;
     private String artist;
     private String duration;
+    private byte[] albumArt;
+    private String genre;
 
+
+    public byte[] getalbumArt() {
+        return albumArt;
+    }
+
+    public void setalbumArt(byte[] albumArt) {
+        this.albumArt = albumArt;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
 
     public String getPath() {
         return path;

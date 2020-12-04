@@ -64,6 +64,7 @@ public class settingsActivity extends AppCompatActivity {
 
     public void about(View view) {}
 
+
 }
 
 

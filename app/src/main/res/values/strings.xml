@@ -2,11 +2,7 @@
     <string name="app_name">Music_application</string>
 
 
-    <string name="Alex">Alex Music</string>
-    <string name="Blow">Blow Your Mind</string>
-    <string name="Aua">Auc Lipa</string>
-    <string name="one">0.25</string>
-    <string name="two">-0.25</string>
+
     <string name="song">song</string>
     <string name="songName">songName</string>
     <string name="artist_name">Artist Name</string>
@@ -22,6 +18,7 @@
 
 
     <string-array name="sleepTimes">
+        <item>1 minute</item>
         <item>5 minutes</item>
         <item>10 minutes</item>
         <item>15 minutes</item>
@@ -29,4 +26,15 @@
         <item>25 minutes</item>
         <item>40 minutes</item>
     </string-array>
+
+    <integer-array name="timesInInt">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>40</item>
+    </integer-array>
+
 </resources>
