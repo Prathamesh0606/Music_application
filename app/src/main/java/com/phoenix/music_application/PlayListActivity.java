@@ -25,7 +25,7 @@ public class PlayListActivity extends AppCompatActivity {
     ListView listView;
     String[] songNames;
     File file;
-    ArrayList<String> artistNames, albumNames;
+    ArrayList<String> artistNames = new ArrayList<String>(), albumNames = new ArrayList<String>();
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
