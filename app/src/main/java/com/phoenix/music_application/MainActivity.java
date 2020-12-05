@@ -3,6 +3,8 @@ package com.phoenix.music_application;
 import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -90,6 +92,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     //public static final String Broadcast_PLAY_NEW_AUDIO = "com.phoenix.music_application.PlayNewAudio";
 
+    //For Notifications
+    NotificationManager notificationManager;
+    String notificationTitle;
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -151,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             metaRetriver.setDataSource(songPath);
             art = metaRetriver.getEmbeddedPicture();
+            songsList.get(pos).setalbumArt(art);
             albumArt.setBackgroundColor(Color.GRAY);
             String title = songsList.get(pos).getTitle();
 
@@ -265,7 +273,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 SongTotalTime = Integer.parseInt(duration);
                 endText.setText(createTimeText(SongTotalTime));
                 start.setMax(SongTotalTime);
+
+                buildnotification();
             }
+
         });
 
 
@@ -278,6 +289,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
                 } else pos = 0;
                 Intent intent = new Intent(MainActivity.this, MediaPlayerService.class);
+
 
                 intent.putExtra("song", songsList.get(pos).getPath());
                 albumArt.setImageResource(R.drawable.album_art_default);
@@ -306,6 +318,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 SongTotalTime = Integer.parseInt(duration);
                 endText.setText(createTimeText(SongTotalTime));
                 start.setMax(SongTotalTime);
+
+                buildnotification();
             }
         });
 
@@ -422,9 +436,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
         });
 
+        //Notification Channel Create
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            createChannel();
+        }
 
     }
-
 
     private final Handler mHandler = new Handler();
 //Make sure you update Seekbar on UI thread
@@ -463,6 +480,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             //start rotate animation
             if(MediaPlayerService.getPosition() == 0) { rotateCard.start(); }
             else { rotateCard.resume(); }
+            buildnotification();
         }
         else {
 
@@ -475,6 +493,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             //pause rotate animation
             rotateCard.pause();
+            buildnotification();
         }
     }
 
@@ -568,6 +587,39 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         Intent intent = new Intent(this, libActivity.class);
         startActivity(intent);
     }
+
+    //--------------------------------NOTIFICATION-----------------------------------
+
+    //Notification Channel is Different types of Notifications which can be activated from settings app notifications option
+    private void createChannel(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel channel = new NotificationChannel(CreateNotification.Channel_ID,
+                    "Default",NotificationManager.IMPORTANCE_LOW);
+
+            notificationManager = getSystemService(NotificationManager.class);
+            if(notificationManager != null){
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+    }
+
+    private void buildnotification(){
+        Bitmap songImage;
+        notificationTitle = songsList.get(pos).getTitle();
+        if (art != null) {
+            songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
+
+            albumArt.setImageBitmap(songImage);
+        } else {
+            songImage = BitmapFactory.decodeResource(getResources(), R.drawable.album_art_default);
+        }
+        CreateNotification.createNotification(MainActivity.this, songsList.get(pos), R.drawable.pausebutton_icon,
+                1, songsList.size() - 1, songImage);
+    }
+
+    //------------------------------------------------
+
+
 }
 
 //LET THIS CODE BE HERE, I THINK WE WILL NEED IT LATER
