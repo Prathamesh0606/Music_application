@@ -22,6 +22,8 @@ public class MediaPlayerService extends Service {
     // private final Handler mHandler = new Handler();
     private final IBinder binder = new LocalBinder();
     public static boolean isplaying = false;
+
+
     //private IBinder mBinder = new IBinder();
 
     @Override
