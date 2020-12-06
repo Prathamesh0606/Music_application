@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             SongTotalTime = Integer.parseInt(duration);
             endText.setText(createTimeText(SongTotalTime));
 
-            lineVisualizer.setPlayer(MediaPlayerService.getAudioSession());
+            //lineVisualizer.setPlayer(MediaPlayerService.getAudioSession());
 
             Bitmap songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
             albumArt.setImageBitmap(songImage);
@@ -262,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
                 songNameTextView.setText(title);
                 songName = title;
+                lineVisualizer.setPlayer(MediaPlayerService.getAudioSession());
 
                 artistNameTextView.setText(artist);
                 SongTotalTime = Integer.parseInt(duration);
@@ -306,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
                 songNameTextView.setText(title);
                 songName = title;
-
+                lineVisualizer.setPlayer(MediaPlayerService.getAudioSession());
                 artistNameTextView.setText(artist);
                 SongTotalTime = Integer.parseInt(duration);
                 endText.setText(createTimeText(SongTotalTime));
@@ -464,6 +465,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             //initialize audio visualization
             lineVisualizer.setPlayer(MediaPlayerService.getAudioSession());
 
+
             //circular album art with centered vinyl graphic
             cardView.setRadius(1000);
             vinylArt.setVisibility(View.VISIBLE);
@@ -480,7 +482,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             playBtton.startAnimation(fade_out);
             playBtton.setBackgroundResource(R.drawable.playbutton_icon);
             playBtton.startAnimation(fade_in);
-
+            lineVisualizer.setPlayer(MediaPlayerService.getAudioSession());
             //pause rotate animation
             rotateCard.pause();
         }
