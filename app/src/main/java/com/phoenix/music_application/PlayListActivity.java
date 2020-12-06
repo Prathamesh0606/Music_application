@@ -35,7 +35,7 @@ public class PlayListActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.playListView);
 
-        //folderpath is static variable inside settings screen activity, which gives path of folder selected to serach for songs
+        //folderPath is static variable inside settings screen activity, which gives path of folder selected to search for songs
         if (settingsActivity.folderPath == null) {
             file = new File(Environment.getExternalStorageDirectory().getAbsolutePath());           //generates new file object with /mnt as root directory
         } else {
@@ -43,7 +43,7 @@ public class PlayListActivity extends AppCompatActivity {
         }
         final ArrayList<Audio> songs = scanDeviceForMp3Files();
 
-        //for (int i = 0; i < songs.size(); i++) { Log.i("null" ,songs.get(i).getTitle()); }
+        for (int i = 0; i < songs.size(); i++) { Log.i("All songs" ,songs.get(i).getTitle()); }
 
         //final ArrayList<ArrayList<Audio>> artistSongs = scanDeviceForArtistMp3Files();
         //final ArrayList<ArrayList<Audio>> albumSongs = scanDeviceForAlbumMp3Files();
@@ -54,14 +54,13 @@ public class PlayListActivity extends AppCompatActivity {
             songNames[i] = songs.get(i).getTitle();             //did this so that song doesnt show .mp3 in its name
         }
 
-        //arrayadapter to
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.songs_layout, R.id.songNameText, songNames);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
+
                 Intent i = new Intent(PlayListActivity.this, MainActivity.class);
                 Bundle b = new Bundle();
 
@@ -75,7 +74,7 @@ public class PlayListActivity extends AppCompatActivity {
 
     }
 
-    private ArrayList<ArrayList<Audio>> scanDeviceForAlbumMp3Files() {
+    /*private ArrayList<ArrayList<Audio>> scanDeviceForAlbumMp3Files() {
 
         int i;
         ArrayList<ArrayList<Audio>> tempAlbumList = new ArrayList<ArrayList<Audio>>();
@@ -172,7 +171,7 @@ public class PlayListActivity extends AppCompatActivity {
         }
 
         return tempArtistList;
-    }
+    }*/
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private ArrayList<Audio> scanDeviceForMp3Files() {
@@ -206,7 +205,6 @@ public class PlayListActivity extends AppCompatActivity {
 
             if (cursor != null) {
                 cursor.moveToFirst();
-//
 
                 while (!cursor.isAfterLast()) {
                     Audio a = new Audio();
