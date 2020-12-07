@@ -25,14 +25,16 @@ public class PlayListActivity extends AppCompatActivity {
     ListView listView;
     String[] songNames;
     File file;
-    ArrayList<String> artistNames, albumNames;
+    ArrayList<String> artistNames = new ArrayList<String>(), albumNames = new ArrayList<String>();
+
+    ArrayList<Audio> songs;
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_list);
-
+        songs = new ArrayList<>();
         listView = findViewById(R.id.playListView);
 
         //folderpath is static variable inside settings screen activity, which gives path of folder selected to serach for songs
@@ -41,7 +43,7 @@ public class PlayListActivity extends AppCompatActivity {
         } else {
             file = new File(settingsActivity.folderPath);
         }
-        final ArrayList<Audio> songs = scanDeviceForMp3Files();
+        songs = scanDeviceForMp3Files();
 
         //for (int i = 0; i < songs.size(); i++) { Log.i("null" ,songs.get(i).getTitle()); }
 
@@ -222,7 +224,7 @@ public class PlayListActivity extends AppCompatActivity {
 
                     //if (!artistNames.contains(cursor.getString(1))) { artistNames.add(ar); }
 
-                    if (p != null) {
+                    if (cursor.getString(2) != null) {
                         mp3Files.add(a);
 
                     }

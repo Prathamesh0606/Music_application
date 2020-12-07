@@ -100,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     String notificationTitle;
 
 
-
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -141,9 +140,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
 
         try {
+            songsList = (ArrayList<Audio>) i.getSerializableExtra("songList");
 
-//            if(songsList==null)
-            songsList = PreferencesConfig.readFromPref(this);
+            if (songsList == null)
+                songsList = PreferencesConfig.readFromPref(this);
 
 
             int p = LoadInt(getApplicationContext(), "position");
@@ -211,10 +211,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         start.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (!MediaPlayerService.isMediaPlayernull() && fromUser) {
+                if (!MediaPlayerService.isMediaPlayerNull() && fromUser) {
 
                     start.setProgress(progress);
-                    MediaPlayerService.seekto(progress);
+                    MediaPlayerService.seekTo(progress);
                 }
             }
 
@@ -382,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             @Override
             public void run() {
-                if (!MediaPlayerService.isMediaPlayernull()) {
+                if (!MediaPlayerService.isMediaPlayerNull()) {
                     int mCurrentPosition = MediaPlayerService.getPosition();
                     startText.setText(createTimeText(mCurrentPosition));
                     start.setProgress(mCurrentPosition);
@@ -525,10 +525,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     public void init() {
         songNameTextView = findViewById(R.id.songTitle);
+        songNameTextView.setSelected(true);
         albumArt = findViewById(R.id.albumArt_image);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         lyricsView = (TextView) findViewById(R.id.lyricsView);
         artistNameTextView = findViewById(R.id.artistName);
+        artistNameTextView.setSelected(true);
         lyricsIcon = findViewById(R.id.lyricsButton);
         playBtton = findViewById(R.id.playPauseButton);
         settingsIcon = findViewById(R.id.settingsButton);
@@ -557,9 +559,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @AfterPermissionGranted(1)
     private void getPermissions() {
         String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO};
-        if (EasyPermissions.hasPermissions(this, perms)) {
-            // Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
-        } else {
+        if (!EasyPermissions.hasPermissions(this, perms)) {
             int DEFAULT_PERMISSIONS_REQ_CODE = 1;
             EasyPermissions.requestPermissions(this, "We need permissions to read songs from storage",
                     DEFAULT_PERMISSIONS_REQ_CODE, perms);

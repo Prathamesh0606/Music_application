@@ -29,7 +29,7 @@ public class settingsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Settings");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         properties = new DialogProperties();                            //dialogbox for selecting storage location to scan
         properties.selection_mode = DialogConfigs.SINGLE_MODE;           //setting some preferences for dialog box
         properties.selection_type = DialogConfigs.FILE_AND_DIR_SELECT;  //read the documentation if you want on github

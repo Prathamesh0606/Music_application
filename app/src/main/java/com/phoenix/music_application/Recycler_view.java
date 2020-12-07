@@ -24,6 +24,7 @@ public class Recycler_view extends AppCompatActivity {
     private ExampleAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<Audio> songs;
+    private ArrayList<String> artistNames;
     File file;
 
 
@@ -58,6 +59,7 @@ public class Recycler_view extends AppCompatActivity {
                 startActivity(i);
             }
         });
+        //  final ArrayList<ArrayList<Audio>> artistSongs = scanDeviceForArtistMp3Files();
     }
 
 
@@ -130,10 +132,9 @@ public class Recycler_view extends AppCompatActivity {
         return mp3Files;
 
     }
-}
 
 
-//    private ArrayList<ArrayList<Audio>> scanDeviceForAlbumMp3Files() {
+    //    private ArrayList<ArrayList<Audio>> scanDeviceForAlbumMp3Files() {
 //
 //        int i;
 //        ArrayList<ArrayList<Audio>> tempAlbumList = new ArrayList<ArrayList<Audio>>();
@@ -183,53 +184,56 @@ public class Recycler_view extends AppCompatActivity {
 //        return tempAlbumList;
 //    }
 //
-//    private ArrayList<ArrayList<Audio>> scanDeviceForArtistMp3Files() {
-//
-//        int i;
-//        ArrayList<ArrayList<Audio>> tempArtistList = new ArrayList<ArrayList<Audio>>();
-//
-//        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-//        String[] projection = {
-//                MediaStore.Audio.Media.TITLE,
-//                MediaStore.Audio.Media.ARTIST,
-//                MediaStore.Audio.Media.DATA,
-//                MediaStore.Audio.Media.DURATION,
-//
-//        };
-//        final String sortOrder = MediaStore.Audio.AudioColumns.ARTIST + " COLLATE LOCALIZED ASC";
-//
-//        Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-//        Cursor cursor = getContentResolver().query(uri, projection, selection, null, sortOrder);
-//
-//        if (cursor != null) {
-//            cursor.moveToFirst();
-//
-//            i = -1;
-//
-//            while (!cursor.isAfterLast()) {
-//                Audio a = new Audio();
-//
-//                String t = cursor.getString(0);
-//                String ar = cursor.getString(1);
-//                String p = cursor.getString(2);
-//
-//                a.setTitle(t);
-//                a.setArtist(ar);
-//                a.setPath(cursor.getString(2));
-//                a.setDuration(cursor.getString(3));
-//
-//                if (!artistNames.contains(ar)) {
-//                    artistNames.add(ar);
-//                    i++;
-//                }
-//
-//                if (p != null) { tempArtistList.get(i).add(a); }
-//
-//                cursor.moveToNext();
-//            }
-//        }
-//
-//        return tempArtistList;
-//    }
+    private ArrayList<ArrayList<Audio>> scanDeviceForArtistMp3Files() {
+
+        int i;
+        ArrayList<ArrayList<Audio>> tempArtistList = new ArrayList<ArrayList<Audio>>();
+
+        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+        String[] projection = {
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.DURATION,
+
+        };
+        final String sortOrder = MediaStore.Audio.AudioColumns.ARTIST + " COLLATE LOCALIZED ASC";
+
+        Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Cursor cursor = getContentResolver().query(uri, projection, selection, null, sortOrder);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+
+            i = -1;
+
+            while (!cursor.isAfterLast()) {
+                Audio a = new Audio();
+
+                String t = cursor.getString(0);
+                String ar = cursor.getString(1);
+                String p = cursor.getString(2);
+
+                a.setTitle(t);
+                a.setArtist(ar);
+                a.setPath(cursor.getString(2));
+                a.setDuration(cursor.getString(3));
+
+                if (!artistNames.contains(ar)) {
+                    artistNames.add(ar);
+                    i++;
+                }
+
+                if (p != null) {
+                    tempArtistList.get(i).add(a);
+                }
+
+                cursor.moveToNext();
+            }
+        }
+
+        return tempArtistList;
+    }
+}
 
 

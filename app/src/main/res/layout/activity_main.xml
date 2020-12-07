@@ -128,7 +128,12 @@
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:gravity="center_horizontal"
-                />
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
 
             <TextView
                 android:id="@+id/artistName"
@@ -139,7 +144,13 @@
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:textStyle="italic"
-                android:gravity="center_horizontal" />
+                android:gravity="center_horizontal"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
 
         </LinearLayout>
 

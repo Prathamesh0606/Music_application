@@ -17,11 +17,13 @@ import java.io.IOException;
 public class MediaPlayerService extends Service {
 
     static MediaPlayer mediaPlayer;
-    private static Handler mHandler = new Handler();
+    static Handler mHandler = new Handler();
     String songToPlay;
     // private final Handler mHandler = new Handler();
     private final IBinder binder = new LocalBinder();
     public static boolean isplaying = false;
+
+
     //private IBinder mBinder = new IBinder();
 
     @Override
@@ -78,7 +80,7 @@ public class MediaPlayerService extends Service {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if (!MediaPlayerService.isMediaPlayernull()) {
+                if (!MediaPlayerService.isMediaPlayerNull()) {
                     MediaPlayerService.pause();
                     isplaying = false;
                 }
@@ -90,30 +92,17 @@ public class MediaPlayerService extends Service {
         return t;
     }
 
-    public static boolean isPlaying() {
-        return mediaPlayer.isPlaying();
-    }
+    public static boolean isPlaying() { return mediaPlayer.isPlaying(); }
 
-    public static void replaySong() {
-        mediaPlayer.seekTo(0);
-    }
+    public static void replaySong() { mediaPlayer.seekTo(0); }
 
-    public static boolean isMediaPlayernull() {
-        return mediaPlayer == null;
-    }
+    public static boolean isMediaPlayerNull() { return mediaPlayer == null; }
 
-    public static int getPosition() {
-        return mediaPlayer.getCurrentPosition();
-    }
+    public static int getPosition() { return mediaPlayer.getCurrentPosition(); }
 
-    public static void seekto(int prog) {
-        mediaPlayer.seekTo(prog);
-    }
+    public static void seekTo(int prog) { mediaPlayer.seekTo(prog); }
 
-    public static int getSongDuration() {
-        return mediaPlayer.getDuration();
-
-    }
+    public static int getSongDuration() { return mediaPlayer.getDuration(); }
 
     public static int getAudioSession() {
         if (mediaPlayer != null) { return mediaPlayer.getAudioSessionId(); }
@@ -134,7 +123,6 @@ public class MediaPlayerService extends Service {
         }
     }
 
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -145,7 +133,6 @@ public class MediaPlayerService extends Service {
         performOnBackgroundThread(time);
         return null;
     }
-
 
     @Override
     public boolean onUnbind(Intent intent) {
@@ -165,10 +152,6 @@ public class MediaPlayerService extends Service {
     }
 
     public class LocalBinder extends Binder {
-        MediaPlayerService getService() {
-            return MediaPlayerService.this;
-        }
+        MediaPlayerService getService() { return MediaPlayerService.this; }
     }
-
-
 }
