@@ -5,8 +5,10 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -38,6 +40,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.chibde.visualizer.LineVisualizer;
+import com.phoenix.music_application.Services.onClearFromRecentService;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -273,6 +276,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 SongTotalTime = Integer.parseInt(duration);
                 endText.setText(createTimeText(SongTotalTime));
                 start.setMax(SongTotalTime);
+                SaveInt(getApplicationContext(), "position", pos);
 
                 buildnotification();
             }
@@ -318,6 +322,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 SongTotalTime = Integer.parseInt(duration);
                 endText.setText(createTimeText(SongTotalTime));
                 start.setMax(SongTotalTime);
+                SaveInt(getApplicationContext(), "position", pos);
 
                 buildnotification();
             }
@@ -360,6 +365,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         shuffleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //if(shuffleButton.getAlpha()==1){ shuffleButton.setAlpha(0.5f); }
+                //    else { shuffleButton.setAlpha(1); }
                 Collections.shuffle(songsList);
                 Toast.makeText(MainActivity.this, "shuffling...", Toast.LENGTH_SHORT).show();
             }
@@ -439,6 +446,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         //Notification Channel Create
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             createChannel();
+            registerReceiver(broadcastReceiver, new IntentFilter("Tracks_Tracks"));
+            startService(new Intent(getBaseContext(), onClearFromRecentService.class    ));
         }
 
     }
@@ -616,6 +625,174 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         CreateNotification.createNotification(MainActivity.this, songsList.get(pos), R.drawable.pausebutton_icon,
                 1, songsList.size() - 1, songImage);
     }
+
+    /*
+        Base class for code that receives and handles broadcast intents sent by Context.sendBroadcast(Intent).
+        You can either dynamically register an instance of this class with Context#registerReceiver or statically
+        declare an implementation with the <receiver> tag in your AndroidManifest.xml.
+    */
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getExtras().getString("actionname");
+
+            switch(action) {
+                case CreateNotification.Action_Previous:
+                    onTrackPrevious();
+                    break;
+                case CreateNotification.Action_Play:
+                    if(MediaPlayerService.isplaying) {
+                        onTrackPause();
+                    } else {
+                        onTrackPlay();
+                    }
+                    break;
+                case CreateNotification.Action_Next:
+                    onTrackNext();
+                    break;
+            }
+        }
+    };
+
+    //@Override
+    public void onTrackPrevious() {
+        if (pos > 0) {
+            pos--;
+
+        } else pos = 0;
+        Intent intent = new Intent(MainActivity.this, MediaPlayerService.class);
+
+
+        intent.putExtra("song", songsList.get(pos).getPath());
+        albumArt.setImageResource(R.drawable.album_art_default);
+        String title = songsList.get(pos).getTitle();
+
+        String artist = songsList.get(pos).getArtist();
+
+        String duration = songsList.get(pos).getDuration();
+        metaRetriver.setDataSource(songsList.get(pos).getPath());
+
+        //album art implementation
+        try {
+            art = metaRetriver.getEmbeddedPicture();
+            Bitmap songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
+            albumArt.setImageBitmap(songImage);
+        } catch (Exception e) {
+            albumArt.setBackgroundColor(Color.GRAY);
+        }
+//
+        startService(intent);
+
+        songNameTextView.setText(title);
+        songName = title;
+
+        artistNameTextView.setText(artist);
+        SongTotalTime = Integer.parseInt(duration);
+        endText.setText(createTimeText(SongTotalTime));
+        start.setMax(SongTotalTime);
+        SaveInt(getApplicationContext(), "position", pos);
+
+        buildnotification();
+    }
+
+    //@Override
+    public void onTrackPlay() {
+            MediaPlayerService.play();
+
+            //change icon to pause
+            playBtton.startAnimation(fade_out);
+            playBtton.setBackgroundResource(R.drawable.pausebutton_icon);
+            playBtton.startAnimation(fade_in);
+
+            //initialize audio visualization
+            lineVisualizer.setPlayer(MediaPlayerService.getAudioSession());
+
+            //circular album art with centered vinyl graphic
+            cardView.setRadius(1000);
+            vinylArt.setVisibility(View.VISIBLE);
+
+            //start rotate animation
+            if(MediaPlayerService.getPosition() == 0) { rotateCard.start(); }
+            else { rotateCard.resume(); }
+            buildnotification();
+
+    }
+
+    //@Override
+    public void onTrackPause() {
+            MediaPlayerService.pause();
+
+            //change icon to play
+            playBtton.startAnimation(fade_out);
+            playBtton.setBackgroundResource(R.drawable.playbutton_icon);
+            playBtton.startAnimation(fade_in);
+
+            //pause rotate animation
+            rotateCard.pause();
+
+        Bitmap songImage;
+        notificationTitle = songsList.get(pos).getTitle();
+        if (art != null) {
+            songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
+
+            albumArt.setImageBitmap(songImage);
+        } else {
+            songImage = BitmapFactory.decodeResource(getResources(), R.drawable.album_art_default);
+        }
+        CreateNotification.createNotification(MainActivity.this, songsList.get(pos), R.drawable.playbutton_icon,
+                1, songsList.size() - 1, songImage);
+    }
+
+    //@Override
+    public void onTrackNext() {
+        if (pos < songsList.size()-1) {
+            pos++;
+
+        } else pos = 0;
+        Intent intent = new Intent(MainActivity.this, MediaPlayerService.class);
+
+        intent.putExtra("song", songsList.get(pos).getPath());
+        albumArt.setImageResource(R.drawable.album_art_default);
+        String title = songsList.get(pos).getTitle();
+
+        String artist = songsList.get(pos).getArtist();
+
+        String duration = songsList.get(pos).getDuration();
+        metaRetriver.setDataSource(songsList.get(pos).getPath());
+
+        //album art implementation
+        try {
+            art = metaRetriver.getEmbeddedPicture();
+            Bitmap songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
+            albumArt.setImageBitmap(songImage);
+        } catch (Exception e) {
+            albumArt.setBackgroundColor(Color.GRAY);
+        }
+//
+        startService(intent);
+
+        songNameTextView.setText(title);
+        songName = title;
+
+        artistNameTextView.setText(artist);
+        SongTotalTime = Integer.parseInt(duration);
+        endText.setText(createTimeText(SongTotalTime));
+        start.setMax(SongTotalTime);
+        SaveInt(getApplicationContext(), "position", pos);
+
+        buildnotification();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManager.cancelAll();
+        }
+
+        unregisterReceiver(broadcastReceiver);
+    }
+
 
     //------------------------------------------------
 

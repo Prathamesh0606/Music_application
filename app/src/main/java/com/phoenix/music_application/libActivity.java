@@ -23,6 +23,7 @@ public class libActivity extends Activity {
     public void openAllsongs(View v){
 
         Intent intent = new Intent(libActivity.this, Recycler_view.class);
+        //Intent intent = new Intent(libActivity.this, PlayListActivity.class);
         startActivity(intent);
     }
 

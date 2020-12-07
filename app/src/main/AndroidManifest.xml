@@ -49,6 +49,8 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+        <receiver android:name=".Services.NotificationActionServices"/>
+        <service android:name=".Services.onClearFromRecentService"/>
     </application>
 
 </manifest>
