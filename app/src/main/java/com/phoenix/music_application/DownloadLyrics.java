@@ -16,20 +16,28 @@ import javax.net.ssl.HttpsURLConnection;
 public class DownloadLyrics extends AsyncTask<String, Void, String> {
     @SuppressLint("StaticFieldLeak")
     Context ctx;
+    ;
+
+    public interface AsyncResponse {
+        void processFinish(String output);
+    }
+
+    public AsyncResponse delegate = null;
 
 
-    public DownloadLyrics(Context ctx) {
+    public DownloadLyrics(Context ctx, AsyncResponse delegate) {
         this.ctx = ctx;
+        this.delegate = delegate;
 
     }
 
 
     @Override
-    protected String doInBackground(String... strings) {
-
+    public String doInBackground(String... strings) {
+        StringBuilder result;
         //String artist = strings[1];
         InputStream in;
-        String result = "";
+        result = new StringBuilder();
 
         try {
             URL url = new URL(strings[0]);
@@ -45,17 +53,15 @@ public class DownloadLyrics extends AsyncTask<String, Void, String> {
 
             while ((data != -1)) {
                 char current = (char) data;
-                result += current;
+                result.append(current);
                 data = reader.read();
             }
 
-            return result;
+            return result.toString();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
         return null;
     }
 
@@ -82,9 +88,13 @@ public class DownloadLyrics extends AsyncTask<String, Void, String> {
             String lyrics = lyr.getString("lyrics_body");
             String[] lyricswithoutOtherCrap = lyrics.split("[/*]+");
 
-//            LyricsActivity.textView.setText(lyricswithoutOtherCrap[0]);
-            MainActivity.lyricsView.setText(lyricswithoutOtherCrap[0]);
 
+            if (!lyricswithoutOtherCrap[0].equals("")) {
+
+                MainActivity.lyricsView.setText(lyricswithoutOtherCrap[0]);
+                delegate.processFinish(lyricswithoutOtherCrap[0]);
+            } else
+                MainActivity.lyricsView.setText(ctx.getString(R.string.could_not_find_lyrics));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -39,7 +39,7 @@
             android:textSize="18sp"
             android:textStyle="bold|italic"
             android:visibility="invisible"
-            tools:text="Lyrics">
+            tools:text="@string/could_not_find_lyrics">
 
 
         </TextView>

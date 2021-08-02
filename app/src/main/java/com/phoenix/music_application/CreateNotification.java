@@ -1,12 +1,10 @@
-package com.phoenix.music_application;
+ package com.phoenix.music_application;
 
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.media.session.MediaSessionCompat;
 
@@ -73,7 +71,7 @@ public class CreateNotification {
                     .setLargeIcon(icon)
                     .setOnlyAlertOnce(true)//show notification for only first time
                     .setShowWhen(false)
-                    .setPriority(NotificationCompat.PRIORITY_LOW)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
                     /*
                     .setStyle(new Notification.MediaStyle()
                             .setShowActionsInCompactView( 0,1,2)

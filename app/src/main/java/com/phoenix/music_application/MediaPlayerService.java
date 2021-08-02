@@ -48,6 +48,9 @@ public class MediaPlayerService extends Service {
             mediaPlayer.setDataSource(songToPlay);
             mediaPlayer.prepare();
             mediaPlayer.start();
+
+//                mediaPlayer.pause();
+
             isplaying = true;
         } catch (IOException e) {
             e.printStackTrace();

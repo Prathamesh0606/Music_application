@@ -77,6 +77,7 @@ public class PlayListActivity extends AppCompatActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     private ArrayList<ArrayList<Audio>> scanDeviceForAlbumMp3Files() {
 
         int i;
