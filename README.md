@@ -19,4 +19,4 @@
 <img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Notifications.png" align = "center" width="180" height="400">
 
 ## 7. Settings
-<img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Settings_Edited.png" align = "center" width="600" height="300">
+<img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Settings_Edited.png" align = "center" width="800" height="400">
