@@ -1,7 +1,7 @@
 # Music_application
 
 ## 1. Main Screen
-<img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Main_Screen.png" align = "center">
+<img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Main_Screen.png" align = "center" wdith="500" height="500">
 
 ## 2. Library Screen
 <img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Library_Screen_Edited.png" align = "center">
