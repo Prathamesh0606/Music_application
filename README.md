@@ -16,7 +16,7 @@
 <img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Main_Screen_Shuffle.png" align = "center" width="400" height="370">
 
 ## 6. Notifications
-<img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Notifications.png" align = "center" width="200" height="400">
+<img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Notifications.png" align = "center" width="180" height="400">
 
 ## 7. Settings
-<img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Settings_Edited.png" align = "center" width="400" height="300">
+<img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Settings_Edited.png" align = "center" width="400" height="250">
