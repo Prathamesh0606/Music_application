@@ -7,7 +7,7 @@
 <img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Library_Screen_Edited.png" align = "center" width="400" height="400">
 
 ## 3. Lyrics
-<img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Main_Screen_Lyrics.png" align = "center" width="400" height="400">
+<img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Main_Screen_Lyrics.png" align = "center" width="400" height="230">
 
 ## 4. Playing
 <img src = "https://github.com/Prathamesh0606/Music_application/blob/master/pics/Main_Screen_Playing.png" align = "center" width="400" height="400">
